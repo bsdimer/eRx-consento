@@ -505,8 +505,18 @@ specialities. The _code_ attribute shows his position in the organization.
 The resource PractitionerRole along with the Practitioner has identifier attribute which
 determines the doctor's UIN.
 
-The **Patient** resource describes the patient's information. The national identifier of the resource can be found
+The **Patient** resource describes the patient's information. The national identifier 
+of the resource can be found here. The Bulgarians national identifier is tagged with code 'NNBGR' which means 'ЕГН'.
  
+##### Most useful search requests
+
+- search for prescriptions issued by a doctor specified by UIN.  
+    https://consento-erx.kubocloud.io/fhir/MedicationRequest?requester.identifier=<identifier.value>&_include=* 
+- search for prescriptions issued by a doctor specified by а part of the name.  
+    https://consento-erx.kubocloud.io/fhir/MedicationRequest?requester.name=Поляков&_include=* 
+- search for prescriptions issued to a patient  
+    https://consento-erx.kubocloud.io/fhir/MedicationRequest?patient.identifier=<identifier.value>&_include=*
+
 ##### Medication dispense workflow
 
 
