@@ -441,7 +441,7 @@ all the resources returned in that Bundle will be related to each other.
                 }
               ]
             },
-            "value": "7611064085"
+            "value": "7********5"
           }
         ],
         "active": true,
@@ -506,7 +506,7 @@ specialities. The _code_ attribute shows his position in the organization.
 The resource PractitionerRole along with the Practitioner has identifier attribute which
 determines the doctor's UIN.
 
-The **Patient** resource describes the patient's information. 
+The **Patient** resource describes the patient's information. The national identifier of the resource can be found
  
 ##### Additional resources
 - eRx-ui Swagger - https://consento-erx.kubocloud.io/erx-ui/swagger-ui/
