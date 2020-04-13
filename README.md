@@ -470,12 +470,11 @@ all the resources returned in that Bundle will be related to each other.
  
 This example contains of few resources need for the visualisation of the receipt. 
 
-###### How to interpret the prescription accourding to the result in the search bundle
+###### How to interpret the prescription
 
-In the most of cases the bundle consist of resource of the same type. 
-The **MedicationRequest** resource (each resource has resourceType attribute which determines its type)
-is the actual prescription entry. Each prescription has one or more entries for medication and the 
-instruction about the dosage. The MedicationRequest resource has a _groupIdentifier_ attribute which used
+The Bundle is the resource which can contain different kind of resource. Each entry in the result has a resourceType attribute which determines its type
+The **MedicationRequest** resource is the actual prescription entry. Each prescription has one or more entries for medication and the 
+instruction about the dosage. The MedicationRequest resource has a _groupIdentifier_ attribute which is used
 for a grouping purpose. All the MedicationRequests which have the same groupIdentifier are
 prescribed in a single prescription. Additionally each MedicationRequest has the identifier with 
 the value of the groupIdentifier.  
@@ -508,5 +507,8 @@ determines the doctor's UIN.
 
 The **Patient** resource describes the patient's information. The national identifier of the resource can be found
  
+##### Medication dispense workflow
+
+
 ##### Additional resources
 - eRx-ui Swagger - https://consento-erx.kubocloud.io/erx-ui/swagger-ui/
