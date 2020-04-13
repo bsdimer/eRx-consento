@@ -483,8 +483,7 @@ MedicationRequest has a category attribute. The value of this attribute determin
 prescription. The type is a CodeableConcept which is a simple code relative to FHIR's CodeSystem or ValueSet.
 All the values of the category attribute in the MedicationRequest can be found here:
 ```
-curl --location --request GET 'https://consento-erx.kubocloud.io/fhir/CodeSystem?name=%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D0%B8%20%D1%80%D0%B5%D1%86%D0%B5%D0%BF%D1%82%D0%B8' \
-    --header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJjZklBRE5feHhDSm1Wa1d5Ti1QTlhFRXZNVVdzMnI2OEN4dG1oRUROelhVIn0.eyJleHAiOjE1ODY4MDYyOTIsImlhdCI6MTU4Njc3MDI5MiwianRpIjoiNzRlYTM1MjUtZWNkZi00MTI2LWJiNzQtNGFlZGZiOGExYWM0IiwiaXNzIjoiaHR0cDovL2NvbnNlbnRvLWVyeC1rZXljbG9hay5rdWJvY2xvdWQuaW8vYXV0aC9yZWFsbXMvcXVhcmt1cyIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiIwYzI0ZjhhZS00NWExLTRmOTEtYTZiMi0wMGZmZWFmZjk3OTkiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJiYWNrZW5kLXNlcnZpY2UiLCJzZXNzaW9uX3N0YXRlIjoiNTBhZjEwMmItMjJhNS00NmM4LWIwZWUtYjFkMDAyYjY0ODk1IiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIiwidXNlciJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IlRlc3QgUGVyc29uIiwicHJlZmVycmVkX3VzZXJuYW1lIjoidGVzdHVzZXIiLCJnaXZlbl9uYW1lIjoiVGVzdCIsImZhbWlseV9uYW1lIjoiUGVyc29uIiwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIn0.cWT-wpmdrS6kuhuePJSvIsAHtdP2H1WalJ8zlJbIoNO7-RZ-zE6GqGw_p-WgI6thwgIv-TE3XTnLeeIYxRB-OEGn6mqqh-iSwSZbvHMuWf7IZsUJDwtkA8z2B37RlCJ9MqyibwOo3Bjs8rBpxxKXucLVEf_Q8SmRSqw3kFJlwTORy-MtXyE7yrbdhTbsW7wgK0YDOZUcX3i8_R6hQCocLZAE7G504MpcNoWKBdBDVAIbjIJ9R18A_G2Qi73XLpEge8xFJ3pWhaMw-bNfr7CFlGhJR5-LHkH_21kzWNVIeuRSbH2pTtDep7YwoiRLttjaSWMMkjGapWW_hI4mitpQpQ'
+curl --location --request GET 'https://consento-erx.kubocloud.io/fhir/CodeSystem?name=%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D0%B8%20%D1%80%D0%B5%D1%86%D0%B5%D0%BF%D1%82%D0%B8'
 ```
 This is simple GET request for `https://consento-erx.kubocloud.io/fhir/CodeSystem?name=Категории рецепти` 
 The categories are specified in the concept property of the CodeSystem resource. Each category has code, display and description.
@@ -511,11 +510,23 @@ of the resource can be found here. The Bulgarians national identifier is tagged 
 ##### Most useful search requests
 
 - search for prescriptions issued by a doctor specified by UIN.  
-    https://consento-erx.kubocloud.io/fhir/MedicationRequest?requester.identifier=<identifier.value>&_include=* 
+    GET https://consento-erx.kubocloud.io/fhir/MedicationRequest?requester.identifier=<identifier.value>&_include=* 
 - search for prescriptions issued by a doctor specified by а part of the name.  
-    https://consento-erx.kubocloud.io/fhir/MedicationRequest?requester.name=Поляков&_include=* 
+    GET https://consento-erx.kubocloud.io/fhir/MedicationRequest?requester.name=Поляков&_include=* 
 - search for prescriptions issued to a patient  
-    https://consento-erx.kubocloud.io/fhir/MedicationRequest?patient.identifier=<identifier.value>&_include=*
+    GET https://consento-erx.kubocloud.io/fhir/MedicationRequest?patient.identifier=<identifier.value>&_include=*
+
+##### Reverse searches
+
+The actual prescription in a PDF file representation which can be authenticated by a digital signature. This file can be 
+attached as DocumentReference resource with relation to the MedicationRequest. The actual MedicationRequest did not have
+a reference to the file. This is the reason why we should execute a reverse search. For example in order to find the 
+PDF printed attachment of the prescription issue the following request:
+
+GET https://consento-erx.kubocloud.io/fhir/MedicationRequest?patient.identifier=<identifier.value>&_include=*&_revinclude=*  
+
+You will receive a Bundle with the same resources as it was in the previous requests but with one additional. The DocumentReference 
+resource specifies the metadata of a  ...
 
 ##### Medication dispense workflow
 
