@@ -119,7 +119,7 @@ to the prescription.
 The actual execution from the browser will be as follows:  
 
 ```
-curl --location --request GET 'https://erx.e-health.bg/receipt?identifier=0000000231' \
+curl --location --request GET 'https://consento-erx.kubocloud.io/erx-ui/prescription?identifier=0000000308' \
 --header 'Content-Type: text/html' 
 ```
 This will return the web page in mobile friendly format. 
@@ -127,7 +127,7 @@ However when the same request is executed with header "Content-type: application
 result will be different:
 
 ```
-curl --location --request GET 'https://erx.e-health.bg/receipt?identifier=0000000231' \
+curl --location --request GET 'https://consento-erx.kubocloud.io/erx-ui/prescription?identifier=0000000308' \
 --header 'Content-Type: application/json+fhir'
 ```
 
@@ -140,27 +140,27 @@ all the resources returned in that Bundle will be related to each other.
 ```
 {
   "resourceType": "Bundle",
-  "id": "62c665b9-f02e-4adf-a7ee-033761d04a23",
+  "id": "33ccbe4e-e9b7-41f5-ba0e-a9d163fb960c",
   "meta": {
-    "lastUpdated": "2020-04-13T08:48:37.941+00:00"
+    "lastUpdated": "2020-04-13T13:04:49.039+00:00"
   },
   "type": "searchset",
-  "total": 2,
+  "total": 1,
   "link": [
     {
       "relation": "self",
-      "url": "https://consento-erx.kubocloud.io/fhir/MedicationRequest?_include=*&identifier=0000000308"
+      "url": "http://consento-erx-keycloak.kubocloud.io/fhir/MedicationRequest?_include=*&identifier=0000000308"
     }
   ],
   "entry": [
     {
-      "fullUrl": "https://consento-erx.kubocloud.io/fhir/MedicationRequest/519284",
+      "fullUrl": "http://consento-erx-keycloak.kubocloud.io/fhir/MedicationRequest/11",
       "resource": {
         "resourceType": "MedicationRequest",
-        "id": "519284",
+        "id": "11",
         "meta": {
           "versionId": "1",
-          "lastUpdated": "2020-04-11T18:06:29.972+00:00"
+          "lastUpdated": "2020-04-13T12:56:18.231+00:00"
         },
         "identifier": [
           {
@@ -175,35 +175,33 @@ all the resources returned in that Bundle will be related to each other.
             "coding": [
               {
                 "system": "http://terminology.elmediko.com/CodeSystem/medication-request-category",
-                "code": "simple-receipt"
+                "code": "white"
               }
             ]
           }
         ],
         "medicationReference": {
-          "reference": "Medication/475669",
+          "reference": "Medication/12",
           "display": "AUGMENTIN FILM COATED TABLETS 875/125MG 14 - GSK - FILM COATED TABLETS"
         },
         "subject": {
-          "reference": "Patient/300204",
+          "reference": "Patient/13",
           "display": "ГЕОРГИ ДИМИТРОВ"
         },
-        "encounter": {
-          "reference": "Encounter/519219"
-        },
         "requester": {
-          "reference": "PractitionerRole/487879",
+          "reference": "PractitionerRole/5",
           "display": "ГППМП - МКЦ \"Моят лекар\""
         },
         "recorder": {
-          "reference": "Practitioner/487878",
-          "display": "Алан Мохаммад"
+          "reference": "Practitioner/4",
+          "display": "д-р Иван Поляков"
         },
         "groupIdentifier": {
           "value": "0000000308"
         },
         "dosageInstruction": [
           {
+            "text": "Да се приема по време на хранене",
             "doseAndRate": [
               {
                 "doseQuantity": {
@@ -221,10 +219,7 @@ all the resources returned in that Bundle will be related to each other.
               "unit": "days"
             }
           }
-        ],
-        "substitution": {
-          "allowedBoolean": false
-        }
+        ]
       },
       "search": {
         "mode": "match"
@@ -235,132 +230,31 @@ all the resources returned in that Bundle will be related to each other.
       }
     },
     {
-      "fullUrl": "https://consento-erx.kubocloud.io/fhir/MedicationRequest/519285",
-      "resource": {
-        "resourceType": "MedicationRequest",
-        "id": "519285",
-        "meta": {
-          "versionId": "1",
-          "lastUpdated": "2020-04-11T18:06:29.972+00:00"
-        },
-        "identifier": [
-          {
-            "system": "http://terminology.elmediko.com/CodeSystem/receipt-id",
-            "value": "0000000308"
-          }
-        ],
-        "status": "active",
-        "intent": "proposal",
-        "category": [
-          {
-            "coding": [
-              {
-                "system": "http://terminology.elmediko.com/CodeSystem/medication-request-category",
-                "code": "simple-receipt"
-              }
-            ]
-          }
-        ],
-        "medicationReference": {
-          "reference": "Medication/478496",
-          "display": "NEXIUM INJECTION VIAL DRY 40MG 10 - ASTRAZENECA - INJECTION"
-        },
-        "subject": {
-          "reference": "Patient/300204",
-          "display": "ГЕОРГИ ДИМИТРОВ"
-        },
-        "encounter": {
-          "reference": "Encounter/519219"
-        },
-        "requester": {
-          "reference": "PractitionerRole/487879",
-          "display": "ГППМП - МКЦ \"Моят лекар\""
-        },
-        "recorder": {
-          "reference": "Practitioner/487878",
-          "display": "Алан Мохаммад"
-        },
-        "reasonCode": [
-          {
-            "coding": [
-              {
-                "userSelected": false
-              }
-            ]
-          }
-        ],
-        "groupIdentifier": {
-          "value": "0000000308"
-        },
-        "dosageInstruction": [
-          {
-            "doseAndRate": [
-              {
-                "doseQuantity": {
-                  "value": 1,
-                  "unit": "tablets"
-                },
-                "rateQuantity": {
-                  "value": 12,
-                  "unit": "daily"
-                }
-              }
-            ],
-            "maxDosePerAdministration": {
-              "value": 7,
-              "unit": "days"
-            }
-          }
-        ],
-        "substitution": {
-          "allowedBoolean": false
-        }
-      },
-      "search": {
-        "mode": "match"
-      },
-      "response": {
-        "status": "201 Created",
-        "etag": "W/\"1\""
-      }
-    },
-    {
-      "fullUrl": "https://consento-erx.kubocloud.io/fhir/PractitionerRole/487879",
+      "fullUrl": "http://consento-erx-keycloak.kubocloud.io/fhir/PractitionerRole/5",
       "resource": {
         "resourceType": "PractitionerRole",
-        "id": "487879",
+        "id": "5",
         "meta": {
-          "versionId": "3",
-          "lastUpdated": "2020-01-13T17:57:19.680+00:00"
+          "versionId": "1",
+          "lastUpdated": "2020-04-12T14:51:00.679+00:00"
         },
-        "identifier": [
-          {
-            "type": {
-              "coding": [
-                {
-                  "system": "http://terminology.elmediko.com/CodeSystem/practitioner-identifier-codes",
-                  "code": "UIN",
-                  "display": "УИН"
-                }
-              ]
-            },
-            "value": "**omitted**"
-          }
-        ],
         "practitioner": {
-          "reference": "Practitioner/487878",
-          "display": "Алан Мохаммад"
+          "reference": "Practitioner/4",
+          "type": "Practitioner",
+          "display": "д-р Иван Поляков"
         },
         "organization": {
-          "reference": "Organization/204298",
-          "type": "Organization"
+          "reference": "Organization/2",
+          "type": "Organization",
+          "display": "ГППМ - МКЦ Моят лекар"
         },
         "code": [
           {
             "coding": [
               {
+                "system": "http://terminology.hl7.org/CodeSystem/practitioner-role",
                 "code": "doctor",
-                "display": "Доктор"
+                "display": "Doctor"
               }
             ]
           }
@@ -369,6 +263,7 @@ all the resources returned in that Bundle will be related to each other.
           {
             "coding": [
               {
+                "system": "http://terminology.elmediko.com/CodeSystem/doctor-speciality-nhif",
                 "code": "00",
                 "display": "Общопрактикуващ лекар"
               }
@@ -377,8 +272,9 @@ all the resources returned in that Bundle will be related to each other.
         ],
         "location": [
           {
-            "reference": "Location/205581",
-            "type": "Location"
+            "reference": "Location/3",
+            "type": "Location",
+            "display": "клон Плевен"
           }
         ]
       },
@@ -386,18 +282,18 @@ all the resources returned in that Bundle will be related to each other.
         "mode": "include"
       },
       "response": {
-        "status": "200 OK",
-        "etag": "W/\"3\""
+        "status": "201 Created",
+        "etag": "W/\"1\""
       }
     },
     {
-      "fullUrl": "https://consento-erx.kubocloud.io/fhir/Medication/475669",
+      "fullUrl": "http://consento-erx-keycloak.kubocloud.io/fhir/Medication/12",
       "resource": {
         "resourceType": "Medication",
-        "id": "475669",
+        "id": "12",
         "meta": {
           "versionId": "1",
-          "lastUpdated": "2020-01-11T19:12:23.681+00:00"
+          "lastUpdated": "2020-04-13T12:56:18.231+00:00"
         },
         "text": {
           "status": "generated",
@@ -512,108 +408,13 @@ all the resources returned in that Bundle will be related to each other.
       }
     },
     {
-      "fullUrl": "https://consento-erx.kubocloud.io/fhir/Medication/478496",
-      "resource": {
-        "resourceType": "Medication",
-        "id": "478496",
-        "meta": {
-          "versionId": "1",
-          "lastUpdated": "2020-01-11T19:14:02.397+00:00"
-        },
-        "text": {
-          "status": "generated",
-          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><div class=\"hapiHeaderText\">NEXIUM INJECTION VIAL DRY 40MG 10</div></div>"
-        },
-        "extension": [
-          {
-            "url": "http://terminology.elmediko.com/Extension/medication-brand-name",
-            "valueString": "NEXIUM"
-          },
-          {
-            "url": "http://terminology.elmediko.com/Extension/medication-brand-short-name",
-            "valueString": "NEXIUM"
-          }
-        ],
-        "identifier": [
-          {
-            "type": {
-              "coding": [
-                {
-                  "system": "http://terminology.elmediko.com/CodeSystem/medication-identifier-type",
-                  "code": "SAT_PT_ID"
-                }
-              ]
-            },
-            "value": "9521"
-          },
-          {
-            "type": {
-              "coding": [
-                {
-                  "system": "http://terminology.elmediko.com/CodeSystem/medication-identifier-type",
-                  "code": "SAT_PT_CODE"
-                }
-              ]
-            },
-            "value": "PT000083"
-          },
-          {
-            "system": "http://terminology.elmediko.com/CodeSystem/medication-codes-who-atc",
-            "value": "A02BC05"
-          },
-          {
-            "system": "http://terminology.elmediko.com/CodeSystem/medication-codes-ephmra-atc",
-            "value": "A02B02"
-          },
-          {
-            "system": "http://terminology.elmediko.com/CodeSystem/medication-codes-nfc",
-            "value": "FPB"
-          }
-        ],
-        "code": {
-          "coding": [
-            {
-              "system": "http://terminology.elmediko.com/CodeSystem/medication-codes-sat",
-              "code": "PT000083",
-              "display": "NEXIUM INJECTION VIAL DRY 40MG 10"
-            }
-          ]
-        },
-        "manufacturer": {
-          "reference": "Organization/478492",
-          "display": "ASTRAZENECA"
-        },
-        "form": {
-          "coding": [
-            {
-              "system": "http://terminology.elmediko.com/CodeSystem/medication-form",
-              "code": "INJECTION",
-              "display": "INJECTION"
-            }
-          ]
-        },
-        "amount": {
-          "numerator": {
-            "value": 10
-          }
-        }
-      },
-      "search": {
-        "mode": "include"
-      },
-      "response": {
-        "status": "201 Created",
-        "etag": "W/\"1\""
-      }
-    },
-    {
-      "fullUrl": "https://consento-erx.kubocloud.io/fhir/Patient/300204",
+      "fullUrl": "http://consento-erx-keycloak.kubocloud.io/fhir/Patient/13",
       "resource": {
         "resourceType": "Patient",
-        "id": "300204",
+        "id": "13",
         "meta": {
           "versionId": "1",
-          "lastUpdated": "2019-12-30T12:59:10.362+00:00"
+          "lastUpdated": "2020-04-13T12:56:18.231+00:00"
         },
         "text": {
           "status": "generated",
@@ -707,5 +508,5 @@ determines the doctor's UIN.
 
 The **Patient** resource describes the patient's information. 
  
-##### Additional resource
+##### Additional resources
 - eRx-ui Swagger - https://consento-erx.kubocloud.io/erx-ui/swagger-ui/
