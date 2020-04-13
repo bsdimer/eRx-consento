@@ -526,10 +526,12 @@ PDF printed attachment of the prescription issue the following request:
 GET https://consento-erx.kubocloud.io/fhir/MedicationRequest?patient.identifier=<identifier.value>&_include=*&_revinclude=*  
 
 You will receive a Bundle with the same resources as it was in the previous requests but with one additional. The DocumentReference 
-resource specifies the metadata of a  ...
+resource specifies the metadata of the prescription attached as file.
 
 ##### Medication dispense workflow
 
+The actual dispense should be performed by the following request. 
+//ToDo: 
 
 ##### Additional resources
 - eRx-ui Swagger - https://consento-erx.kubocloud.io/erx-ui/swagger-ui/
