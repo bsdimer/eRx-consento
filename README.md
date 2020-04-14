@@ -127,8 +127,8 @@ However when the same request is executed with header "Content-type: application
 result will be different:
 
 ```
-curl --location --request GET 'https://consento-erx.kubocloud.io/erx-ui/prescription?identifier=0000000308' \
---header 'Content-Type: application/json+fhir'
+curl -v 'https://consento-erx.kubocloud.io/erx-ui/api/prescription?identifier=0000000308&hash=7b77bab79c1f9f23852ec7cdb7903f7ea0a1a38f276b864b517a8d165b8f5208&created=2020-04-14T07%3A20%3A32.326%2B00%3A00'
+
 ```
 
 This will return the JSON formatted string of the prescription in the format of FHIR Bundle. 
@@ -530,7 +530,30 @@ resource specifies the metadata of the prescription attached as file.
 
 ##### Medication dispense workflow
 
-The actual dispense should be performed by the following request. 
+The actual dispense should make two changes into the database. The both changes can be executed in single transaction by the following way.
+
+Create FHIR bundle with type of transaction:
+
+
+Thus will update the status of the MedicationRequest (which is a single entity in the prescription) and will create
+a dispense for each of the requests. 
+MedicationDispense status can be one of the following values _"preparation | in-progress | cancelled | on-hold | completed | entered-in-error | stopped | declined | unknown
+"_.
+##### Update with patch operation
+
+Sometimes the preparation of the medication is more time consuming task. In these circumstances the FHIR model permits
+to create a MedicationDispense with different state which can be updated after along with the process of the preparation of the medication.
+
+```
+curl --location --request PATCH 'https://consento-erx.kubocloud.io/fhir/MedicationRequest/13' 
+--header 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOjU5NSwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJyb2xlcyI6W3sicm9sZSI6IlJPTEVfVVNFUiIsImNsaWVudCI6Imxtc3dlYiJ9LHsicm9sZSI6IlJPTEVfRE9DVE9SIiwiY2xpZW50IjoibG1zd2ViIn1dLCJpc3MiOiJodHRwczovL2VsbWVkaWtvLmNvbSIsImdpdmVuX25hbWUiOiLQkNC70LXQutGB0LDQvdC00YrRgCIsImNsaWVudF9pZCI6Imxtc3dlYiIsInBpY3R1cmUiOm51bGwsInNjb3BlIjoiKi8qLioiLCJwaG9uZV9udW1iZXIiOm51bGwsImV4cCI6MTU4NjkwMDQwNSwiZmFtaWx5X25hbWUiOiLQkNC70LXQutGB0LjQtdCyIiwiZW1haWwiOiJhbGV4YW5kZXIuYWxleGlldkBlLWhlYWx0aC5iZyIsInVzZXJuYW1lIjoiYWxleEBzYXQifQ.3sZOw5GbNtbGJ3Zav_Wi_ZouSj_d7E_CVuluVJR1d_1l6qflKBbtTd98T0fynhKLICHLySHnSNeZ7Xj3ssYKKA' 
+--header 'Content-Type: application/json-patch+json' 
+--header 'Content-Type: application/json' 
+--data-raw '[
+{ "op": "replace", "path": "/status", "value": "completed" }
+]'
+```
+
 //ToDo: 
 
 ##### Additional resources
