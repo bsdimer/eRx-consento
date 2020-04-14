@@ -649,9 +649,15 @@ curl --location --request POST 'http://consento-erx.kubocloud.io/fhir' \
 
 Thus will update the status of the MedicationRequests and will create
 a dispense for each of the requests at once. This means that all the MedicationRequests and MedicationDispenses can be included in this single request.
-
-MedicationDispense status can be one of the following values _"preparation | in-progress | cancelled | on-hold | completed | entered-in-error | stopped | declined | unknown
+The man thing here is the MedicationDispense resource. It represents the actual dispension of the medication. The full resource description can be found here https://www.hl7.org/fhir/medicationdispense.html
+ 
+- MedicationDispense status can be one of the following values _"preparation | in-progress | cancelled | on-hold | completed | entered-in-error | stopped | declined | unknown
 "_.
+- "subject" is a reference to a Patient object. The reference is not mandatory so only the display property can be specified with the names of the subject written on the prescription.
+- "receiver" is also a reference to the person which is the actual buyer of the medication. It could be a different person than the patient. For that reason we can specify only the names in the display attribute. The receiver property is also not mandatory.
+- "quantity" is the amount of medication dispensed. It is a FHIR SimpleQuantity(https://www.hl7.org/fhir/datatypes.html#Quantity) object and can have value and units. In our case 2 peaces(опаковки).
+- "authorizingPrescription" is a reference to the MedicationRequest. This property is mandatory for the data integrity of the eRx database.
+   
 ##### Update with patch operation
 
 Sometimes the preparation of the medication is more time consuming task. In these circumstances the FHIR model permits
