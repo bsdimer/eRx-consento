@@ -534,9 +534,122 @@ The actual dispense should make two changes into the database. The both changes 
 
 Create FHIR bundle with type of transaction:
 
+```
+curl --location --request POST 'http://consento-erx.kubocloud.io/fhir' \
+--header 'Authorization: Bearer <token>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "resourceType": "Bundle",
+    "type": "transaction",
+    "entry": [
+        {
+            "resource": {
+                "resourceType": "MedicationRequest",
+                "id": "11",
+                "meta": {
+                    "versionId": "11",
+                    "lastUpdated": "2020-04-14T13:15:14.515+00:00"
+                },
+                "identifier": [
+                    {
+                        "system": "http://terminology.elmediko.com/CodeSystem/receipt-id",
+                        "value": "0000000308"
+                    }
+                ],
+                "status": "active",
+                "intent": "proposal",
+                "category": [
+                    {
+                        "coding": [
+                            {
+                                "system": "http://terminology.elmediko.com/CodeSystem/medication-request-category",
+                                "code": "white"
+                            }
+                        ]
+                    }
+                ],
+                "medicationReference": {
+                    "reference": "Medication/12",
+                    "display": "AUGMENTIN FILM COATED TABLETS 875/125MG 14 - GSK - FILM COATED TABLETS"
+                },
+                "subject": {
+                    "reference": "Patient/13",
+                    "display": "ГЕОРГИ ДИМИТРОВ"
+                },
+                "requester": {
+                    "reference": "PractitionerRole/5",
+                    "display": "ГППМП - МКЦ \"Моят лекар\""
+                },
+                "recorder": {
+                    "reference": "Practitioner/4",
+                    "display": "д-р Иван Поляков"
+                },
+                "groupIdentifier": {
+                    "value": "0000000308"
+                },
+                "dosageInstruction": [
+                    {
+                        "text": "Да се приема по време на хранене",
+                        "doseAndRate": [
+                            {
+                                "doseQuantity": {
+                                    "value": 2,
+                                    "unit": "tablets"
+                                },
+                                "rateQuantity": {
+                                    "value": 12,
+                                    "unit": "daily"
+                                }
+                            }
+                        ],
+                        "maxDosePerAdministration": {
+                            "value": 7,
+                            "unit": "days"
+                        }
+                    }
+                ]
+            },
+            "request": {
+                "method": "PATCH",
+                "url": "MedicationRequest/11"
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:aa4abd42-985b-461a-b15d-c15c04f5e634",
+            "resource": {
+                "resourceType": "MedicationDispense",
+                "status": "completed",
+                "medicationReference": {
+                    "reference": "Medication/12",
+                    "display": "AUGMENTIN FILM COATED TABLETS 875/125MG 14"
+                },
+                "subject": {
+                    "reference": "Patient/13",
+                    "display": "ГЕОРГИ ДИМИТРОВ"
+                },
+                "receiver": {
+                    "display": "Димитър Димитров"
+                },
+                "quantity": {
+                    "value": "2",
+                    "unit": "опаковки"
+                },
+                "authorizingPrescription": {
+                    "reference": "MedicationRequest/11"
+                }
+            },
+            "request": {
+                "method": "POST"
+            }
+        }
+    ]
+}'
+```
+// ToDo: Example with transaction including PATCH update 
 
-Thus will update the status of the MedicationRequest (which is a single entity in the prescription) and will create
-a dispense for each of the requests. 
+Thus will update the status of the MedicationRequests and will create
+a dispense for each of the requests at once. This means that all the MedicationRequests and MedicationDispenses can be included in this single request.
+
 MedicationDispense status can be one of the following values _"preparation | in-progress | cancelled | on-hold | completed | entered-in-error | stopped | declined | unknown
 "_.
 ##### Update with patch operation
