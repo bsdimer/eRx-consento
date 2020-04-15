@@ -11,35 +11,36 @@ In order to signup with the system execute the following request:
 
 ```
 curl --location --request POST 'https://consento-erx.kubocloud.io/erx-ui/api/entry' \
---header 'Content-Type: application/json' \
+--header 'Content-Type: application/json; charset=UTF-8' \
 --data-raw '{
-  "user": {
-    "data": [
-      {
-        "username": "testuser",
-        "firstName": "Test",
-        "lastName": "Person",
-        "email": "test@test.com",
-        "credentials": [
-          {
-            "type": "password",
-            "value": "qweQWE123\\u0021@#"
-          }
-        ]
-      }
-    ],
-    "action": "CREATE",
-    "pharmacyRegRq": {
-      "address": "test address",
-      "state": "Sofia",
-      "district": "Sofia",
-      "city": "Sofia",
-      "vatNumber": "3947384789",
-      "phone": "088888888",
-      "pharmacyNo": "NO12345678",
-      "pharmacyName": "TEST PHARMACY"
-    }
-  }
+    "user": {
+        "data": [
+            {
+                "username": "test2",
+                "firstName": "User",
+                "lastName": "Test",
+                "email": "test2@gbg.bg",
+                "credentials": [
+                    {
+                        "type": "password",
+                        "value": "12345"
+                    }
+                ]
+            }
+        ],
+        "action": "CREATE",
+        "pharmacyRegRq": {
+            "address": "Address 1",
+            "state": "Sofia",
+            "district": "Sofia",
+            "city": "Sofia",
+            "vatNumber": "324234234",
+            "phone": "08888888",
+            "pharmacyNo": "NO11111111",
+            "pharmacyName": "PHARMACY1"
+        }
+    },
+    "auth": null
 }
 '
 ```
