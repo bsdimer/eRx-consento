@@ -146,6 +146,61 @@ curl --location --request POST 'https://consento-erx.kubocloud.io/erx-ui/api/aut
     }
 }'
 ```
+If the token is valid you will receive an response in the following format:
+
+```
+{
+    "auth": {
+        "whoAmI": {
+            "id": "9cdf4017-13df-45db-a1e9-79985a9b341d",
+            "createdTimestamp": 1586968251423,
+            "username": "test2",
+            "enabled": true,
+            "totp": false,
+            "emailVerified": false,
+            "firstName": "User",
+            "lastName": "Test",
+            "email": "test2@gbg.bg",
+            "attributes": {
+                "PHARMACY_NS_CITY": [
+                    "Sofia"
+                ],
+                "PHARMACY_NS_VAT_NUMBER": [
+                    "324234234"
+                ],
+                "PHARMACY_NS_DISTRICT": [
+                    "Sofia"
+                ],
+                "PHARMACY_NS_PHARMACY_NAME": [
+                    "PHARMACY1"
+                ],
+                "PHARMACY_NS_PHARMACY_NO": [
+                    "NO11111111"
+                ],
+                "PHARMACY_NS_ADDRESS": [
+                    "Address 1"
+                ],
+                "PHARMACY_NS_STATE": [
+                    "Sofia"
+                ],
+                "PHARMACY_NS_PHONE": [
+                    "08888888"
+                ]
+            },
+            "disableableCredentialTypes": [],
+            "requiredActions": [],
+            "notBefore": 0,
+            "access": {
+                "manageGroupMembership": true,
+                "view": true,
+                "mapRoles": true,
+                "impersonate": true,
+                "manage": true
+            }
+        }
+    }
+}
+```
 
 ##### FHIR overview
 
@@ -156,7 +211,8 @@ In order to understand the API you must check the following links:
  FHIR Restfull API - https://www.hl7.org/fhir/http.html  
  FHIR Search operations - https://www.hl7.org/fhir/search.html  
  All the resource types - https://www.hl7.org/fhir/resourcelist.html  
-        _* For the purpose of the eRx we will work only with few ot them_  
+        _* For the purpose of the eRx we will work only with few of them - MedicationRequest, Medication, MedicationDispense, 
+        Practitioner, PractitionerRole, Patient, Organization, Location  
 
 ##### eRX workflow
 
@@ -180,16 +236,16 @@ to the prescription.
 The actual execution from the browser will be as follows:  
 
 ```
-curl --location --request GET 'https://consento-erx.kubocloud.io/erx-ui/api/prescription?identifier=0000000308&hash=7b77bab79c1f9f23852ec7cdb7903f7ea0a1a38f276b864b517a8d165b8f5208&created=2020-04-14T07%3A20%3A32.326%2B00%3A00' \
---header 'Content-Type: text/html' 
+curl --location --request GET 'https://consento-erx.kubocloud.io/erx-ui/api/prescription?identifier=0000000308&hash=65ae447fa6202741be085f53fac0c0241c1e496a39604e735f0c04e5c96f95a6&created=2020-04-15T12%3A30%3A52.568%2B00%3A00' \
+--header 'Content-Type: text/html'
 ```
 This will return the web page in mobile friendly format. 
 However when the same request is executed with header "Content-type: application-json+fhir" the 
 result will be different:
 
 ```
-curl --location --request GET 'https://consento-erx.kubocloud.io/erx-ui/api/prescription?identifier=0000000308&hash=7b77bab79c1f9f23852ec7cdb7903f7ea0a1a38f276b864b517a8d165b8f5208&created=2020-04-14T07%3A20%3A32.326%2B00%3A00' \
---header 'Content-Type: application/json+fhir'
+curl --location --request GET 'https://consento-erx.kubocloud.io/erx-ui/api/prescription?identifier=0000000308&hash=65ae447fa6202741be085f53fac0c0241c1e496a39604e735f0c04e5c96f95a6&created=2020-04-15T12%3A30%3A52.568%2B00%3A00' \
+--header 'Content-Type: application/json; charset=UTF-8'
 ```
 
 This will return the JSON formatted string of the prescription in the format of FHIR Bundle. 
