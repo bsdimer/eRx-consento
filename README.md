@@ -127,8 +127,8 @@ However when the same request is executed with header "Content-type: application
 result will be different:
 
 ```
-curl -v 'https://consento-erx.kubocloud.io/erx-ui/api/prescription?identifier=0000000308&hash=7b77bab79c1f9f23852ec7cdb7903f7ea0a1a38f276b864b517a8d165b8f5208&created=2020-04-14T07%3A20%3A32.326%2B00%3A00'
-
+curl --location --request GET 'https://consento-erx.kubocloud.io/erx-ui/api/prescription?identifier=0000000308&hash=7b77bab79c1f9f23852ec7cdb7903f7ea0a1a38f276b864b517a8d165b8f5208&created=2020-04-14T07%3A20%3A32.326%2B00%3A00' \
+--header 'Content-Type: application/json+fhir'
 ```
 
 This will return the JSON formatted string of the prescription in the format of FHIR Bundle. 
