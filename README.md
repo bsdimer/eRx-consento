@@ -46,8 +46,68 @@ curl --location --request POST 'https://consento-erx.kubocloud.io/erx-ui/api/ent
 ```
 
 The information related to the pharmacy account must be supplied in the _pharmacyRegRq_ attribute.
+The result will looks like:
+
+```
+{
+    "user": {
+        "result": [
+            {
+                "id": "9cdf4017-13df-45db-a1e9-79985a9b341d",
+                "createdTimestamp": 1586968251423,
+                "username": "test2",
+                "enabled": true,
+                "totp": false,
+                "emailVerified": false,
+                "firstName": "User",
+                "lastName": "Test",
+                "email": "test2@gbg.bg",
+                "attributes": {
+                    "PHARMACY_NS_CITY": [
+                        "Sofia"
+                    ],
+                    "PHARMACY_NS_VAT_NUMBER": [
+                        "324234234"
+                    ],
+                    "PHARMACY_NS_DISTRICT": [
+                        "Sofia"
+                    ],
+                    "PHARMACY_NS_PHARMACY_NAME": [
+                        "PHARMACY1"
+                    ],
+                    "PHARMACY_NS_PHARMACY_NO": [
+                        "NO11111111"
+                    ],
+                    "PHARMACY_NS_ADDRESS": [
+                        "Address 1"
+                    ],
+                    "PHARMACY_NS_STATE": [
+                        "Sofia"
+                    ],
+                    "PHARMACY_NS_PHONE": [
+                        "08888888"
+                    ]
+                },
+                "disableableCredentialTypes": [],
+                "requiredActions": [],
+                "notBefore": 0,
+                "access": {
+                    "manageGroupMembership": true,
+                    "view": true,
+                    "mapRoles": true,
+                    "impersonate": true,
+                    "manage": true
+                }
+            }
+        ]
+    }
+}
+```
+
 
 ##### Signin request
+
+In order to access the system's resource you must get a Bearer token with a such query:
 
 ```
 curl --location --request POST 'https://consento-erx.kubocloud.io/erx-ui/api/entry' \
@@ -56,11 +116,11 @@ curl --location --request POST 'https://consento-erx.kubocloud.io/erx-ui/api/ent
     "user": {
         "data": [
             {
-                "username": "testuser",
+                "username": "test2",
                 "credentials": [
                     {
                         "type": "password",
-                        "value": "qweQWE123\\u0021@#"
+                        "value": "12345"
                     }
                 ]
             }
