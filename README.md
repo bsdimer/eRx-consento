@@ -644,6 +644,8 @@ of the resource can be found here. The Bulgarians national identifier is tagged 
  
 ##### Most useful search requests
 
+- search for prescriptions by identifier.  
+    GET https://consento-erx.kubocloud.io/fhir/MedicationRequest?identifier=<identifier.value>&_include=* 
 - search for prescriptions issued by a doctor specified by UIN.  
     GET https://consento-erx.kubocloud.io/fhir/MedicationRequest?requester.identifier=<identifier.value>&_include=* 
 - search for prescriptions issued by a doctor specified by а part of the name.  
