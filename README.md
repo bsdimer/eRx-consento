@@ -611,8 +611,17 @@ All the values of the category attribute in the MedicationRequest can be found h
 The categories are specified in the concept property of the CodeSystem resource. Each category has code, display and description.
 - MedicationRequest.priority - currently not used
 - MedicationRequest.doNotPerform - currently not used 
-- MedicationRequest.reported - currently not used 
-- 
+- MedicationRequest.reported[x] - currently not used 
+- MedicationRequest.medication[x] - Medication to be taken. This attribute can be with name medicationCodeableConcept or 
+medicationReference. Depending from the name of the attribute the Medication could be specified as FHIR CodeableConcept 
+(just the code and the system which classifies the medication)
+or reference to a Medication object included in the eRx database. Both formats are possible so it depends from the 
+issuer of the prescription which method is preferred for him. 
+- MedicationRequest.subject - a reference to a Patient object. The Patient object is included in the Bundle as well. 
+- MedicationRequest.encounter - the medical exam in which the prescription has been issued. 
+- MedicationRequest.supportingInformation - currently not used
+- MedicationRequest.authoredOn - the date and the time when the prescription has been issued
+- MedicationRequest.
 
 The MedicationRequest has different relations to other resources. In the common case these are
 **Medication**, **Patient**, **PractitionerRole**. 
@@ -800,6 +809,14 @@ curl --location --request PATCH 'https://consento-erx.kubocloud.io/fhir/Medicati
 ```
 
 //ToDo: 
+
+##### Best practices
+These are few best practices which should be taken into consideration when working with eRx API.
+
+- Use Accept header when execute request to the FHIR API. When send a requests to the FHIR API the result will be returned in JSON format.
+ The header Content-type: application/json is sufficient to say that you want to receive the results in JSON, but when for example
+ the JWT token is expired you will receive a HTML if don't send the Accept header. In order to receive the response and the error in
+ a Json send both the Accept and Content-type headers in the requests.  
 
 ##### Additional resources
 - eRx-ui Swagger - https://consento-erx.kubocloud.io/erx-ui/swagger-ui/
