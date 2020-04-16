@@ -589,21 +589,30 @@ This example contains of few resources need for the visualisation of the receipt
 
 ###### How to interpret the prescription
 
-The Bundle is the resource which can contain different kind of resource. Each entry in the result has a resourceType attribute which determines its type
-The **MedicationRequest** resource is the actual prescription entry. Each prescription has one or more entries for medication and the 
-instruction about the dosage. The MedicationRequest resource has a _groupIdentifier_ attribute which is used
-for a grouping purpose. All the MedicationRequests which have the same groupIdentifier are
-prescribed in a single prescription. Additionally each MedicationRequest has the identifier with 
-the value of the groupIdentifier.  
-  
+The result in the Bundle represents a single prescription and can contains and can contain different kind of resources. 
+Each entry in the result has a resourceType attribute which determines its type
+The **MedicationRequest** resource is the actual prescription entry. The MedicationRequest resource has a _groupIdentifier_ attribute which is used
+for a grouping purpose. **All the MedicationRequests which have the same _groupIdentifier_ are
+prescribed in a single prescription**. Additionally each MedicationRequest has the _identifier_ with 
+the value of the groupIdentifier. The detailed description of the MedicationRequest resource is:
+
+- MedicationRequest.identifier - The identifier of the medical prescription.
+The Bundle can have many resources of type MedicationRequest
+and each of them can have the same identifier. All the MedicationRequest with the same identifier are actually entries in 
+a single medical prescription. 
+- MedicationRequest.status - The status of the MedicationRequest. The value of this attribute can be _active | on-hold | cancelled | completed | entered-in-error | stopped | draft | unknown_
+In most cases when the prescription has been issued it will have status of _active_. More information about the statuses can be found here: https://www.hl7.org/fhir/valueset-medicationrequest-status.html
+- MedicationRequest.statusReason - currently not used
+- MedicationRequest.intent - currently not used
+- MedicationRequest.category
 MedicationRequest has a category attribute. The value of this attribute determines the type of the 
 prescription. The type is a CodeableConcept which is a simple code relative to FHIR's CodeSystem or ValueSet.
-All the values of the category attribute in the MedicationRequest can be found here:
-```
-curl --location --request GET 'https://consento-erx.kubocloud.io/fhir/CodeSystem?name=%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D0%B8%20%D1%80%D0%B5%D1%86%D0%B5%D0%BF%D1%82%D0%B8'
-```
-This is simple GET request for `https://consento-erx.kubocloud.io/fhir/CodeSystem?name=Категории рецепти` 
+All the values of the category attribute in the MedicationRequest can be found here "https://consento-erx.kubocloud.io/fhir/CodeSystem?name=Категории рецепти" 
 The categories are specified in the concept property of the CodeSystem resource. Each category has code, display and description.
+- MedicationRequest.priority - currently not used
+- MedicationRequest.doNotPerform - currently not used 
+- MedicationRequest.reported - currently not used 
+- 
 
 The MedicationRequest has different relations to other resources. In the common case these are
 **Medication**, **Patient**, **PractitionerRole**. 
@@ -764,9 +773,9 @@ curl --location --request POST 'http://consento-erx.kubocloud.io/fhir' \
 ```
 // ToDo: Example with transaction including PATCH update 
 
-Thus will update the status of the MedicationRequests and will create
-a dispense for each of the requests at once. This means that all the MedicationRequests and MedicationDispenses can be included in this single request.
-The man thing here is the MedicationDispense resource. It represents the actual dispension of the medication. The full resource description can be found here https://www.hl7.org/fhir/medicationdispense.html
+Thus will update the status of the MedicationRequests from _active_ to _completed_ and will create
+a dispense for each of the requests in a single atomic transaction. This means that all the MedicationRequests and MedicationDispenses can be included in this single request.
+The main thing here is the MedicationDispense resource. It represents the actual dispension(fulfill) of the medication. The full resource description can be found here https://www.hl7.org/fhir/medicationdispense.html
  
 - MedicationDispense status can be one of the following values _"preparation | in-progress | cancelled | on-hold | completed | entered-in-error | stopped | declined | unknown
 "_.
