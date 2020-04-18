@@ -19,6 +19,11 @@ eRx Consento - интеграция с ФармаСтар
 В него може има обекти от няколко различни типа: **MedicationRequest, Medication, PractitionerRole, Patient, Encounter.**
 
 - MedicationRequest е ресурсът, който указва един ред от предписанието в рецептата. Ако изписаната рецепта има повече от едно лекарство, то в резултата ще присъстват повече от един ресурс от тип MedicationRequest.
+Всички видове рецепти, както и протокола по НЗОК представляват ресурси от тип MedicationRequest. Атрибута който ги отличава е MedicationRequest.category.
+Категориите MedicationRequest са представени под формата на CodeableConcept атрибут (https://www.hl7.org/fhir/datatypes.html#CodeableConcept).
+Кодовете на на съответните рецепти могат да бъдат разгледани в кодовата система "Категории рецепти" ( GET https://consento-erx.kubocloud.io/fhir/CodeSystem/medication-request-category-bg). Те биват: 
+**white**(обикновенна бяла рецепта), **yellow**(жълта рецепта), **green**(зелена рецепта), **nhif**(рецепта по НЗОК), **nhif-military-veterans**(рецепта за ветерани), 
+**nhif-military-invalids-below50**(Военно-инвалиди с до 50% инвалидизиране), **nhif-military-invalids-over50**(Военно-инвалиди с над 50% инвалидизиране), **nhif-protocol**(протокол за лекарства по НЗОК).  
 - Medication е лекарственият продукт, който е изписан в рецептата. Този ресурс може да отстъства от резултата
 ако MedicationRequest ресурса реферира лекарството само по код (MedicationRequest.medicationCodeableConcept - https://www.hl7.org/fhir/medicationrequest-definitions.html#MedicationRequest.medication_x_).
  Ако обаче лекарството е реферирано с обекта в eRx FHIR базата данни, то в резулата ще присъства и обект от тип Medication
@@ -30,8 +35,8 @@ eRx Consento - интеграция с ФармаСтар
 ##### Съответствие на моделите
 - **PrescriptionNo** - тази стойност може да бъде взета от атрибута identifier.value на някой от ресурсите MedicationRequest (ако рецептата притежава
 повече от един MedicationRequest всички те имат един и същ идентификатор). Тъй като е възможно ресурса MedicationRequest да има повече
-от един identifier атрибут PrescriptionNo номера на самата рецепта се съдържа в атрибута, който има 
-identifier.system == http://erx.e-health.bg/ns/prescription-id, т.е.
+от един identifier атрибут PrescriptionNo номера на самата рецепта се съдържа в атрибута, който има "system": "http://erx.e-health.bg/ns/prescription-id"
+, т.е.
 
 ```...
 {
@@ -51,8 +56,11 @@ identifier.system == http://erx.e-health.bg/ns/prescription-id, т.е.
 ```
 В горния пример ресурсът има няколко идентификатора, първият е идентификатора на рецептата а втория е идентификатора на 
 протокола по НЗОК към който е издадена конкретната рецепта.
-- **PrescriptionDate** - стойността на този атрибут може да бъде взета от 
-
+- **PrescriptionDate** - стойността на този атрибут може да бъде взета от MedicationRequest.authoredOn
+- **ProtocolNo** - в случай че рецептата е издадена в контекста на протокол за лекарства по НЗОК, то тя притежава два 
+идентификатора както е показано в горния пример. Разликата е в това, че именованото пространство (namespace) на 
+идентификатора на протокола се характеризира със "system": "http://erx.e-health.bg/ns/nhif-protocol-id" 
+- **ProtocolDate** - протокола във eRx FHIR представлява MedicationRequest с категория 
 ```
 public class Prescription : IData
     {
