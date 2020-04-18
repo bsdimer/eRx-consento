@@ -33,6 +33,9 @@ eRx Consento - интеграция с ФармаСтар
 - Patient е ресурсния обект описващ пациента.
 
 ##### Съответствие на моделите
+
+Съответствие с модела на клас _Prescription_.
+
 - **PrescriptionNo** - тази стойност може да бъде взета от атрибута identifier.value на някой от ресурсите MedicationRequest (ако рецептата притежава
 повече от един MedicationRequest всички те имат един и същ идентификатор). Тъй като е възможно ресурса MedicationRequest да има повече
 от един identifier атрибут PrescriptionNo номера на самата рецепта се съдържа в атрибута, който има "system": "http://erx.e-health.bg/ns/prescription-id"
@@ -60,7 +63,12 @@ eRx Consento - интеграция с ФармаСтар
 - **ProtocolNo** - в случай че рецептата е издадена в контекста на протокол за лекарства по НЗОК, то тя притежава два 
 идентификатора както е показано в горния пример. Разликата е в това, че именованото пространство (namespace) на 
 идентификатора на протокола се характеризира със "system": "http://erx.e-health.bg/ns/nhif-protocol-id" 
-- **ProtocolDate** - протокола във eRx FHIR представлява MedicationRequest с категория 
+- **ProtocolDate** - протокола в eRx FHIR представлява MedicationRequest с категория nhif-protocol. Датата на протокола се намира в 
+атрибута MedicationRequest.authoredOn.
+- **PrescriptionBookletNo** - ???
+- **AmbSheetNo** - номера на амбулаторен лист се взима от Encounter.identifier.value. Ресурса Encounter представлява запис 
+за самия преглед.
+
 ```
 public class Prescription : IData
     {
