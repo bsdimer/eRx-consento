@@ -6,7 +6,7 @@ This tutorial describes how to deal with the eRx platform of Consento.
 
 In order to read the medication prescription data and to dispense the requested medications you should use the FHIR API which requires authentication. The mechanism uses token based authentication which can be tested in the following way:
 
-##### Signup request
+#### Signup request
 In order to signup with the system execute the following request:
 
 ```
@@ -105,7 +105,7 @@ The result will looks like:
 ```
 
 
-##### Signin request
+#### Signin request
 
 In order to access the system's resource you must get a Bearer token with a such query:
 
@@ -132,7 +132,7 @@ curl --location --request POST 'https://consento-erx.kubocloud.io/erx-ui/api/ent
 
 You will receive the bearer token which is used against the all authenticated endpoints. 
 
-##### Whoami request
+#### Whoami request
 
 In order to check the validity and the information behind the issued token, execute the following request:
 
@@ -202,7 +202,7 @@ If the token is valid you will receive an response in the following format:
 }
 ```
 
-##### FHIR overview
+#### FHIR overview
 
 The data model and the REST API of the eRx platform is based on FHIR. The latest version of the API is R4. 
 In order to understand the API you must check the following links:
@@ -214,18 +214,18 @@ In order to understand the API you must check the following links:
         _* For the purpose of the eRx we will work only with few of them - MedicationRequest, Medication, MedicationDispense, 
         Practitioner, PractitionerRole, Patient, Organization, Location  
 
-##### eRX workflow
+#### eRX workflow
 
 When we talk about the eRx there are two distinct business workflows. The first workflow 
 involves the creation of the prescription (a MedicationRequest resource in the FHIR nomenclature)
 and the second one is the update the status of this prescription along with creation of dispense record.
 The first workflow is executed in the software of the doctors and the second one will be performed by the pharmacies.
 
-##### Pharmacies workflow
+#### Pharmacies workflow
 
 There various searches that can be performed in order to find the prescription data. 
 
-###### Search for prescription by single atomic unauthenticated request
+##### Search for prescription by single atomic unauthenticated request
 The main reason for the existence of unauthenticated search mechanism for gathering the 
 data of the single prescription is the opportunity to use your mobile device with QRCode scanning functionality.
 When you scan a QRCode printed on the prescription blank with your mobile phone it will redirect you directly
@@ -250,7 +250,7 @@ curl --location --request GET 'https://consento-erx.kubocloud.io/erx-ui/api/pres
 
 This will return the JSON formatted string of the prescription in the format of FHIR Bundle. 
 
-###### What is FHIR Bundle
+##### What is FHIR Bundle
 
 FHIR Bundle is a container for a collection of resources. In the case of search for a single prescription 
 all the resources returned in that Bundle will be related to each other.
@@ -587,7 +587,7 @@ all the resources returned in that Bundle will be related to each other.
  
 This example contains of few resources need for the visualisation of the receipt. 
 
-###### How to interpret the prescription
+##### How to interpret the prescription
 
 The result in the Bundle represents a single prescription and can contains and can contain different kind of resources. 
 Each entry in the result has a resourceType attribute which determines its type
@@ -642,7 +642,7 @@ determines the doctor's UIN.
 The **Patient** resource describes the patient's information. The national identifier 
 of the resource can be found here. The Bulgarians national identifier is tagged with code 'NNBGR' which means 'ЕГН'.
  
-##### Most useful search requests
+#### Most useful search requests
 
 - search for prescriptions by identifier.  
     GET https://consento-erx.kubocloud.io/fhir/MedicationRequest?identifier=<identifier.value>&_include=* 
@@ -653,7 +653,7 @@ of the resource can be found here. The Bulgarians national identifier is tagged 
 - search for prescriptions issued to a patient  
     GET https://consento-erx.kubocloud.io/fhir/MedicationRequest?patient.identifier=<identifier.value>&_include=*
 
-##### Reverse searches
+#### Reverse searches
 
 The actual prescription in a PDF file representation which can be authenticated by a digital signature. This file can be 
 attached as DocumentReference resource with relation to the MedicationRequest. The actual MedicationRequest did not have
@@ -665,7 +665,7 @@ GET https://consento-erx.kubocloud.io/fhir/MedicationRequest?patient.identifier=
 You will receive a Bundle with the same resources as it was in the previous requests but with one additional. The DocumentReference 
 resource specifies the metadata of the prescription attached as file.
 
-##### Medication dispense workflow
+#### Medication dispense workflow
 
 The actual dispense should make two changes into the database. The both changes can be executed in single transaction by the following way.
 
@@ -795,7 +795,7 @@ The main thing here is the MedicationDispense resource. It represents the actual
 - "quantity" is the amount of medication dispensed. It is a FHIR SimpleQuantity(https://www.hl7.org/fhir/datatypes.html#Quantity) object and can have value and units. In our case 2 peaces(опаковки).
 - "authorizingPrescription" is a reference to the MedicationRequest. This property is mandatory for the data integrity of the eRx database.
    
-##### Update with patch operation
+#### Update with patch operation
 
 Sometimes the preparation of the medication is more time consuming task. In these circumstances the FHIR model permits
 to create a MedicationDispense with different state which can be updated after along with the process of the preparation of the medication.
@@ -812,7 +812,7 @@ curl --location --request PATCH 'https://consento-erx.kubocloud.io/fhir/Medicati
 
 //ToDo: 
 
-##### Best practices
+#### Best practices
 These are few best practices which should be taken into consideration when working with eRx API.
 
 - Use Accept header when execute request to the FHIR API. When send a requests to the FHIR API the result will be returned in JSON format.
@@ -820,5 +820,5 @@ These are few best practices which should be taken into consideration when worki
  the JWT token is expired you will receive a HTML if don't send the Accept header. In order to receive the response and the error in
  a Json send both the Accept and Content-type headers in the requests.  
 
-##### Additional resources
+#### Additional resources
 - eRx-ui Swagger - https://consento-erx.kubocloud.io/erx-ui/swagger-ui/
