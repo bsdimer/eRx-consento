@@ -68,6 +68,89 @@ eRx Consento - интеграция с ФармаСтар
 - **PrescriptionBookletNo** - ???
 - **AmbSheetNo** - номера на амбулаторен лист се взима от Encounter.identifier.value. Ресурса Encounter представлява запис 
 за самия преглед.
+- **Doctor** - Класът Doc се попълва от ресурса PractitionerRole. Съответствието на стойностите е както следва:
+
+```
+...
+{
+    "resourceType": "PractitionerRole",
+    "id": "5",
+    "meta": {
+        "versionId": "2",
+        "lastUpdated": "2020-04-13T14:26:44.150+00:00"
+    },
+    "identifier": [
+        {
+            "system": "http://erx.e-health.bg/ns/uin",
+            "value": "2300013314" <-- Тов е УИН номера на доктора
+        },
+        {
+            "system": "http://erx.e-health.bg/ns/rhif-codes",
+            "value": "2200000010" <-- Това е код по РЗОК на лечебното заведение
+        },
+        {
+            "system": "http://erx.e-health.bg/ns/practice-no",
+            "value": "1202340392" <-- Номер на практика
+        }
+    ],
+    "telecom": [
+        {
+            "system": "phone",
+            "use": "mobile",
+            "value": "088888880"
+        },
+        {
+            "system": "email",
+            "use": "work",
+            "value": "doc1@e-health.bg"
+        }
+    ],
+    "practitioner": {
+        "reference": "Practitioner/4",
+        "type": "Practitioner",
+        "display": "д-р Иван Поляков" <-- Имена и префикс на доктора
+    },
+    "organization": {
+        "reference": "Organization/2",
+        "type": "Organization",
+        "display": "ГППМ - МКЦ Моят лекар" <-- Име на лечебното заведение в което е издадена рецептата
+    },
+    "code": [
+        {
+            "coding": [
+                {
+                    "system": "http://terminology.hl7.org/CodeSystem/practitioner-role",
+                    "code": "doctor",
+                    "display": "Доктор" <-- Код на длъжността на доктора в лечебното заведение
+                }
+            ]
+        }
+    ],
+    "specialty": [
+        {
+            "coding": [
+                {
+                    "system": "http://terminology.e-health.bg/CodeSystem/nhif-doctor-specialities",
+                    "code": "00", <-- Код на специалност по НЗОК
+                    "display": "Общопрактикуващ лекар" 
+                }
+            ]
+        }
+    ],
+    "location": [
+        {
+            "reference": "Location/3",
+            "type": "Location",
+            "display": "клон Плевен" <-- Локация в която е издадена рецептата
+        }
+    ]
+}
+...
+```
+- **Patient** - Информацяита за пациента се взима от обекта с _"resourceType": Patient_. 
+Съответствието на моделите е както следва:
+
+
 
 ```
 public class Prescription : IData
