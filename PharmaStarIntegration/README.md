@@ -150,6 +150,83 @@ eRx Consento - интеграция с ФармаСтар
 - **Patient** - Информацяита за пациента се взима от обекта с _"resourceType": Patient_. 
 Съответствието на моделите е както следва:
 
+```
+{
+    "resourceType": "Patient",
+    "id": "13",
+    "meta": {
+        "versionId": "2",
+        "lastUpdated": "2020-04-15T17:07:29.299+00:00"
+    },
+    "text": {
+        "status": "generated",
+        "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><div class=\"hapiHeaderText\">ГЕОРГИ ТОДОРОВ <b>ДИМИТРОВ </b></div><table class=\"hapiPropertyTable\"><tbody><tr><td>Identifier</td><td>7611064085</td></tr></tbody></table></div>"
+    },
+    "extension": [
+        {
+            "url": "http://terminology.elmediko.com/Extension/nhif-branch",
+            "valueString": "08" <-- РЗИ код
+        },
+        {
+            "url": "http://terminology.elmediko.com/Extension/nhif-region",
+            "valueString": "15" <-- код на здравен район по НЗОК
+        }
+    ],
+    "identifier": [
+        {
+            "use": "official",
+            "system": "http://erx.e-health.bg/ns/nnbgr",
+            "value": "7703022402" <-- ЕГН на пациента
+        },
+        {
+            "system": "http://erx.e-health.bg/ns/ss",
+            "value": "100000000" <-- Номер на социална осигуровка
+        },
+        {
+            "system": "http://erx.e-health.bg/ns/tpr",
+            "value": "100000002" <-- Личен номер на чужденец ЛНЧ
+        },
+        {
+            "system": "http://erx.e-health.bg/ns/prc",
+            "value": "100000003", <-- Номер на лична карта
+            "period" { <-- Валидност на документа за самоличност
+                "start": "2017-01-01T00:00:00.000Z",
+                "end": "2025-01-01T00:00:00.000Z"
+            },
+            "assigner": { <--  Издател на документ за самоличност
+                "display": "МВР София"
+            }
+        }
+    ],
+    "active": true,
+    "name": [
+        {
+            "use": "official",
+            "family": "ДИМИТРОВ", <-- Фамилия
+            "given": [
+                "ГЕОРГИ", <-- Собствено име
+                "ТОДОРОВ" <-- Презиме 
+            ]
+        }
+    ],
+    "gender": "male" <-- Пол на пациента. Може да има следните стойности: male | female | other | unknown
+    "birthDate": "1988-01-03T22:00:00.000Z", <-- Рожденна дата в ISO Datetime формат
+    "address": [ <-- Адрес на пациента
+        {
+            "use": "home",
+            "type": "physical",
+            "line": [
+                "Петко Д. Петков"
+            ],
+            "city": "Пловдив",
+            "district": "Пловдив",
+            "state": "Пловдив",
+            "country": "България"
+        }
+    ]    "birthDate": 
+}
+```
+- **PartType** - Тази характеристика на рецептата се отнася за рецепти издадени по НЗОК.
 
 
 ```
