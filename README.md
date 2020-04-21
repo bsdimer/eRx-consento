@@ -693,7 +693,7 @@ curl --location --request POST 'http://consento-erx.kubocloud.io/fhir' \
                         "value": "0000000308"
                     }
                 ],
-                "status": "active",
+                "status": "completed",
                 "intent": "proposal",
                 "category": [
                     {
@@ -747,7 +747,7 @@ curl --location --request POST 'http://consento-erx.kubocloud.io/fhir' \
                 ]
             },
             "request": {
-                "method": "PATCH",
+                "method": "PUT",
                 "url": "MedicationRequest/11"
             }
         },

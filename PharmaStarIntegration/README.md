@@ -170,6 +170,14 @@ eRx Consento - интеграция с ФармаСтар
         {
             "url": "http://terminology.elmediko.com/Extension/nhif-region",
             "valueString": "15" <-- код на здравен район по НЗОК
+        },
+        {
+            "url": "http://terminology.elmediko.com/Extension/patient-maternity-flag",
+            "valueBoolean": true <-- майчинство
+        },
+        {
+            "url": "http://terminology.elmediko.com/Extension/patient-pregnancy-flag",
+            "valueBoolean": true <-- бременност
         }
     ],
     "identifier": [
@@ -227,8 +235,169 @@ eRx Consento - интеграция с ФармаСтар
 }
 ```
 - **PartType** - Тази характеристика на рецептата се отнася за рецепти издадени по НЗОК.
-Тъй като в модела на FHIR липсва аналогия на отрязък на рецепта, в модела на eRx в въведено
-разширение Extension 
+Тъй като в модела на FHIR липсва аналогия на отрязък на рецепта, то за целите на eRx в въведено
+разширение Extension, което описва необходимия тип данни. Ако рецептата е издадена по НЗОК то 
+всички обекти от тип MedicationRequest, притежават следния атрибут:
+
+```
+...
+{
+    "resourceType": "MedicationRequest",
+    "id": "44",
+    "meta": {
+        "versionId": "1",
+        "lastUpdated": "2020-04-15T12:30:52.568+00:00"
+    },
+    "extension": [
+        {
+            "url": "http://terminology.e-health.bg/Extension/nhif-prescription-part",
+            "valueString": "AC" <-- Инициали отговарящи на отрязъка в който се намира въпросното лекарство
+        }
+    ]
+...
+}
+```
+В стойността на разширението се описват инициалите, в които се намира лекарството. Например ако 
+въпросното лекарство е изписано в отрязъци А и C то стойността на този атрибут е AC. Това означава,
+че всички възможни стойности на това разширение са: A,B,C,AB,AC,BC,ABC. 
+- **VeteranBookledNo** - 
+- **VeteranBookledDate** - 
+- **TerritorialExpertMedicalCommissionBookledNo**
+- **TerritorialExpertMedicalCommissionBookledDate**
+
+##### Позволение за замяна на медикамента
+
+Ресурса MedicationRequest носи и информация за това дали позволена замяна на медикамента. Това е инидикирано с 
+атрибута MedicationRequest.substitution
+
+
+##### Статус на рецепта
+
+Статус на рецептата се определя от атрибута MedicationRequest.status който може да притежава следните стойности:
+__active | on-hold | cancelled | completed | entered-in-error | stopped | draft | unknown__.
+В повечето случаи създадената и необслужена рецепта е в състояние **active**. След издаването на 
+лекарство по нея, тя става в статус **completed**. 
+
+#### Издаване на лекарството по обикновенна - бяла рецепта
+
+Издаването на лекарството в eRx-Consento става чрез създаване на ресурс от тип MedicationDispense (https://www.hl7.org/fhir/medicationdispense.html)
+заедно с промяна на статуса на MedicationRequest в completed. Двете операции трябва да бъдат изпълнени в 
+рамките на транзакция, като за целта се създава следния ресурс:
+
+```
+curl --location --request POST 'http://consento-erx.kubocloud.io/fhir' \
+--header 'Authorization: Bearer <token>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "resourceType": "Bundle",
+    "type": "transaction",
+    "entry": [
+        {
+            "resource": { <-- Копира се ресурса на MedicationRequest за който се прави издаване на лекарството
+                "resourceType": "MedicationRequest",
+                "id": "11",
+                "meta": {
+                    "versionId": "11",
+                    "lastUpdated": "2020-04-14T13:15:14.515+00:00"
+                },
+                "identifier": [
+                    {
+                        "system": "http://terminology.elmediko.com/CodeSystem/receipt-id",
+                        "value": "0000000308"
+                    }
+                ],
+                "status": "completed", <-- Променя се стойността на статуса от active на completed
+                "category": [
+                    {
+                        "coding": [
+                            {
+                                "system": "http://terminology.elmediko.com/CodeSystem/medication-request-category",
+                                "code": "white"
+                            }
+                        ]
+                    }
+                ],
+                "medicationReference": {
+                    "reference": "Medication/12",
+                    "display": "AUGMENTIN FILM COATED TABLETS 875/125MG 14 - GSK - FILM COATED TABLETS"
+                },
+                "subject": {
+                    "reference": "Patient/13",
+                    "display": "ГЕОРГИ ДИМИТРОВ"
+                },
+                "requester": {
+                    "reference": "PractitionerRole/5",
+                    "display": "ГППМП - МКЦ \"Моят лекар\""
+                },
+                "recorder": {
+                    "reference": "Practitioner/4",
+                    "display": "д-р Иван Поляков"
+                },
+                "groupIdentifier": {
+                    "value": "0000000308"
+                },
+                "dosageInstruction": [
+                    {
+                        "text": "Да се приема по време на хранене",
+                        "doseAndRate": [
+                            {
+                                "doseQuantity": {
+                                    "value": 2,
+                                    "unit": "tablets"
+                                },
+                                "rateQuantity": {
+                                    "value": 12,
+                                    "unit": "daily"
+                                }
+                            }
+                        ],
+                        "maxDosePerAdministration": {
+                            "value": 7,
+                            "unit": "days"
+                        }
+                    }
+                ]
+            },
+            "request": {
+                "method": "PUT", <-- Метода PUT съответства на ъпдейт заявка за ресурса
+                "url": "MedicationRequest/11" <-- Записва се id връзка към ресурса който трябва да се промени. Формата е 'Тип/ид'
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:aa4abd42-985b-461a-b15d-c15c04f5e634",
+            "resource": {
+                "resourceType": "MedicationDispense",
+                "status": "completed",
+                "medicationReference": {
+                    "reference": "Medication/12", <-- Референция към лекарството, което е изписано по рецепта
+                    "display": "AUGMENTIN FILM COATED TABLETS 875/125MG 14"
+                },
+                "subject": {
+                    "reference": "Patient/13", <-- Референция към пациента
+                    "display": "ГЕОРГИ ДИМИТРОВ"
+                },
+                "receiver": {
+                    "display": "Димитър Димитров" <-- Имена на човека получил лекартствата
+                },
+                "quantity": {
+                    "value": "2", <-- Количество на издаденото лекарство 
+                    "unit": "опаковки"
+                },
+                "authorizingPrescription": {
+                    "reference": "MedicationRequest/11" <-- Референция към MedicationRequest обекта
+                }
+            },
+            "request": {
+                "method": "POST"
+            }
+        }
+    ]
+}'
+```
+
+#### Издаване на лекарството по рецепта с реимбурсиране 
+
+Издаването на рецепти по здравна каса е подобен на горния процес, няколко малки допълнения.
 
 
 ```
@@ -305,6 +474,19 @@ public class Patient
         public string Sex { get; set; } = string.Empty;
         public bool MaternityFlag { get; set; } = false;
         public bool PregnancyFlag { get; set; } = false;
+    }
+
+public class PrescriptionRow
+    {
+        public int Line { get; set; }
+        public string NhifCode { get; set; } = string.Empty;
+        public string IcdCode { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public bool IsGeneric { get; set; } = false;
+        public int PrescribedQuantity { get; set; }
+        public int DispensionQuantity { get; set; }
+        public int NumberOfDays { get; set; }
+        public decimal? Price { get; set; }
     }
 	
 public class Pharmacist
