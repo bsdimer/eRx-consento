@@ -11,7 +11,7 @@ eRx Consento - интеграция с ФармаСтар
 
 След вземането на токен стартирайте търсене за обект от тип MedicationRequest чрез следната примертна заявка.
 
- GET https://stagingerx.e-health.bg/fhir/MedicationRequest?identifier=0000000308&_include=*
+ GET https://stagingerx.e-health.bg/fhir/MedicationRequest?identifier=ERXW20200423000001&_include=*
  
 като параметърът identifier е номера(идентификатор) на рецептата, опицията _include=* указва искането в резултата 
 да бъдат добавени всички ресурси релативни към текущата рецепта. 
