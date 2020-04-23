@@ -11,7 +11,7 @@ eRx Consento - интеграция с ФармаСтар
 
 След вземането на токен стартирайте търсене за обект от тип MedicationRequest чрез следната примертна заявка.
 
- GET https://consento-erx.kubocloud.io/fhir/MedicationRequest?identifier=0000000308&_include=*
+ GET https://stagingerx.e-health.bg/fhir/MedicationRequest?identifier=0000000308&_include=*
  
 като параметърът identifier е номера(идентификатор) на рецептата, опицията _include=* указва искането в резултата 
 да бъдат добавени всички ресурси релативни към текущата рецепта. 
@@ -21,7 +21,7 @@ eRx Consento - интеграция с ФармаСтар
 - MedicationRequest е ресурсът, който указва един ред от предписанието в рецептата. Ако изписаната рецепта има повече от едно лекарство, то в резултата ще присъстват повече от един ресурс от тип MedicationRequest.
 Всички видове рецепти, както и протокола по НЗОК представляват ресурси от тип MedicationRequest. Атрибута който ги отличава е MedicationRequest.category.
 Категориите MedicationRequest са представени под формата на CodeableConcept атрибут (https://www.hl7.org/fhir/datatypes.html#CodeableConcept).
-Кодовете на на съответните рецепти могат да бъдат разгледани в кодовата система "Категории рецепти" ( GET https://consento-erx.kubocloud.io/fhir/CodeSystem/medication-request-category-bg). Те биват: 
+Кодовете на на съответните рецепти могат да бъдат разгледани в кодовата система "Категории рецепти" ( GET https://stagingerx.e-health.bg/fhir/CodeSystem/medication-request-category-bg). Те биват: 
 **white**(обикновенна бяла рецепта), **yellow**(жълта рецепта), **green**(зелена рецепта), **nhif**(рецепта по НЗОК), **nhif-military-veterans**(рецепта за ветерани), 
 **nhif-military-invalids-below50**(Военно-инвалиди с до 50% инвалидизиране), **nhif-military-invalids-over50**(Военно-инвалиди с над 50% инвалидизиране), **nhif-protocol**(протокол за лекарства по НЗОК).  
 - Medication е лекарственият продукт, който е изписан в рецептата. Този ресурс може да отстъства от резултата
@@ -43,22 +43,49 @@ eRx Consento - интеграция с ФармаСтар
 
 ```...
 {
-    "resourceType": "MedicationRequest"
+    "resourceType": "MedicationRequest",
     "identifier": [
-        {
-            "system": "http://erx.e-health.bg/ns/prescription-id"
-            "value": "0000000308"
-        },
-        {
-            "system": "http://erx.e-health.bg/ns/nhif-protocol-id"
-            "value": "0004401232"
-        }
-    ]
+              {
+                "system": "http://erx.e-health.bg/ns/prescription-id",
+                "value": "ERXN20200423000001"
+              },
+              {
+                "system": "http://erx.e-health.bg/ns/mr-id",
+                "value": "ERXN20200423000001-А1"
+              },
+              {
+                "system": "http://erx.e-health.bg/ns/booklet-id",
+                "value": "1080005"
+              }
+    ],
     ...
 } 
 ```
+
+Идентификатора е символен низ със следната структура:
+
+```ERXW20200423000001```
+
+където ERX са 3 символа за издател на идентификатора
+W - означава бяла рецепта, може да има N(Рецепта по НЗОК), G,Y съответно за зелена и жълта, P за протокол, М(Ветерани), 
+I(Военно-инвалиди с до 50% инвалидизиране), J(Военно-инвалиди с над 50% инвалидизиране)
+20200423 - е датата на издаване на рецептата във формат YYYYMMDD
+000001 - е поредия номер в един ден (тази последна част може да бъде с променлива дължина, но винаги padding character e 0-нула)
+
+Идентификаторът с именовано пространство **http://erx.e-health.bg/ns/mr-id** реферира конкретния изписан медикамент в състава на рецептата.
+Тъй като номенклатурата позволява изписването на лекарства в бланка 5А (три разпечатки), то в случая лекарството изписано
+с този идентификатор ERXN20200423000001-**А1** се намира в първа позиция на отрязък А. 
+
+Идентифиакторът с именовано пространство **http://erx.e-health.bg/ns/booklet-id** определя номера на рецептурната книжка. 
+Така например за да се намерят всички лекарства (рецепти) изписани по рецептурна книжка с номер 1080005 се изпълнява следната
+заявка:
+
+```
+GET https://stagingerx.e-health.bg/fhir/MedicationRequest?identifier=http://erx.e-health.bg/ns/booklet-id|1080005
+```
+
 В горния пример ресурсът има няколко идентификатора, първият е идентификатора на рецептата а втория е идентификатора на 
-протокола по НЗОК към който е издадена конкретната рецепта.
+протокола по НЗОК, към който е издадена конкретната рецепта.
 - **PrescriptionDate** - стойността на този атрибут може да бъде взета от MedicationRequest.authoredOn
 - **ProtocolNo** - в случай че рецептата е издадена в контекста на протокол за лекарства по НЗОК, то тя притежава два 
 идентификатора както е показано в горния пример. Разликата е в това, че именованото пространство (namespace) на 
@@ -85,12 +112,12 @@ eRx Consento - интеграция с ФармаСтар
             "value": "2300013314" <-- Тов е УИН номера на доктора
         },
         {
-            "system": "http://erx.e-health.bg/ns/rhif-codes",
+            "system": "http://erx.e-health.bg/ns/rhif-id",
             "value": "2200000010" <-- Това е код по РЗОК на лечебното заведение
         },
         {
-            "system": "http://erx.e-health.bg/ns/practice-no",
-            "value": "1202340392" <-- Номер на практика
+            "system": "http://erx.e-health.bg/ns/bulstat",
+            "value": "1202340392" <-- ЕИК на лечебното заведение
         }
     ],
     "telecom": [
@@ -130,7 +157,7 @@ eRx Consento - интеграция с ФармаСтар
         {
             "coding": [
                 {
-                    "system": "http://terminology.e-health.bg/CodeSystem/nhif-doctor-specialities",
+                    "system": "http://terminology.e-health.bg/CodeSystem/doctor-speciality-nhif",
                     "code": "00", <-- Код на специалност по НЗОК
                     "display": "Общопрактикуващ лекар" 
                 }
@@ -141,7 +168,7 @@ eRx Consento - интеграция с ФармаСтар
         {
             "reference": "Location/3",
             "type": "Location",
-            "display": "клон Плевен" <-- Локация в която е издадена рецептата
+            "display": "клон Плевен" <-- Име на локация в която е издадена рецептата
         }
     ]
 }
@@ -173,11 +200,11 @@ eRx Consento - интеграция с ФармаСтар
         },
         {
             "url": "http://terminology.elmediko.com/Extension/patient-maternity-flag",
-            "valueBoolean": true <-- майчинство
+            "valueBoolean": false <-- майчинство
         },
         {
             "url": "http://terminology.elmediko.com/Extension/patient-pregnancy-flag",
-            "valueBoolean": true <-- бременност
+            "valueBoolean": false <-- бременност
         }
     ],
     "identifier": [
@@ -187,15 +214,15 @@ eRx Consento - интеграция с ФармаСтар
             "value": "7703022402" <-- ЕГН на пациента
         },
         {
-            "system": "http://erx.e-health.bg/ns/ss",
-            "value": "100000000" <-- Номер на социална осигуровка
+            "system": "http://erx.e-health.bg/ns/nnfra",
+            "value": "100000004594894850941" <-- Национален номер за страна Франция
         },
         {
-            "system": "http://erx.e-health.bg/ns/tpr",
-            "value": "100000002" <-- Личен номер на чужденец ЛНЧ
+            "system": "http://erx.e-health.bg/ns/bg-tpr",
+            "value": "0703022411" <-- Личен номер на чужденец ЛНЧ
         },
         {
-            "system": "http://erx.e-health.bg/ns/prc",
+            "system": "http://erx.e-health.bg/ns/bg-prc",
             "value": "100000003", <-- Номер на лична карта
             "period" { <-- Валидност на документа за самоличност
                 "start": "2017-01-01T00:00:00.000Z",
@@ -234,42 +261,29 @@ eRx Consento - интеграция с ФармаСтар
     ]    "birthDate": 
 }
 ```
-- **PartType** - Тази характеристика на рецептата се отнася за рецепти издадени по НЗОК.
-Тъй като в модела на FHIR липсва аналогия на отрязък на рецепта, то за целите на eRx в въведено
-разширение Extension, което описва необходимия тип данни. Ако рецептата е издадена по НЗОК то 
-всички обекти от тип MedicationRequest, притежават следния атрибут:
+- **PartType** - Определя се от идентификатора на рецептата. Идентификаторът с именовано пространство **http://erx.e-health.bg/ns/mr-id** 
+реферира конкретния изписан медикамент в състава на рецептата.
+Тъй като номенклатурата позволява изписването на лекарства в бланка 5А (три разпечатки), то в случая лекарството изписано
+с този идентификатор ERXN20200423000001-**А1** се намира в първа позиция на отрязък А. 
 
-```
-...
-{
-    "resourceType": "MedicationRequest",
-    "id": "44",
-    "meta": {
-        "versionId": "1",
-        "lastUpdated": "2020-04-15T12:30:52.568+00:00"
-    },
-    "extension": [
-        {
-            "url": "http://terminology.e-health.bg/Extension/nhif-prescription-part",
-            "valueString": "AC" <-- Инициали отговарящи на отрязъка в който се намира въпросното лекарство
-        }
-    ]
-...
-}
-```
-В стойността на разширението се описват инициалите, в които се намира лекарството. Например ако 
-въпросното лекарство е изписано в отрязъци А и C то стойността на този атрибут е AC. Това означава,
-че всички възможни стойности на това разширение са: A,B,C,AB,AC,BC,ABC. 
-- **VeteranBookledNo** - 
-- **VeteranBookledDate** - 
-- **TerritorialExpertMedicalCommissionBookledNo**
-- **TerritorialExpertMedicalCommissionBookledDate**
+- **VeteranBookledNo** - Не е имплементирано все още, но най-вероятно ще бъде идентификатор в конкретно именовано пространство.
+- **VeteranBookledDate** - Не е имплементирано все още, но най-вероятно ще бъде идентификатор в конкретно именовано пространство.
+- **TerritorialExpertMedicalCommissionBookledNo** - Не е имплементирано все още, но най-вероятно ще бъде идентификатор в конкретно именовано пространство.
+- **TerritorialExpertMedicalCommissionBookledDate** - Не е имплементирано все още, но най-вероятно ще бъде идентификатор в конкретно именовано пространство.
 
 ##### Позволение за замяна на медикамента
 
 Ресурса MedicationRequest носи и информация за това дали позволена замяна на медикамента. Това е инидикирано с 
-атрибута MedicationRequest.substitution
+атрибута MedicationRequest.substitution.allowedBoolean:
 
+```
+...
+    resourceType: "MedicationRequest"
+    "substitution": {
+        "allowedBoolean": false
+    }
+...
+```
 
 ##### Статус на рецепта
 
@@ -285,106 +299,59 @@ __active | on-hold | cancelled | completed | entered-in-error | stopped | draft 
 рамките на транзакция, като за целта се създава следния ресурс:
 
 ```
-curl --location --request POST 'http://consento-erx.kubocloud.io/fhir' \
+curl --location --request POST 'http://stagingerx.e-health.bg/fhir/' \
 --header 'Authorization: Bearer <token>' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "resourceType": "Bundle",
     "type": "transaction",
     "entry": [
-        {
-            "resource": { <-- Копира се ресурса на MedicationRequest за който се прави издаване на лекарството
-                "resourceType": "MedicationRequest",
-                "id": "11",
-                "meta": {
-                    "versionId": "11",
-                    "lastUpdated": "2020-04-14T13:15:14.515+00:00"
-                },
-                "identifier": [
-                    {
-                        "system": "http://terminology.elmediko.com/CodeSystem/receipt-id",
-                        "value": "0000000308"
-                    }
-                ],
-                "status": "completed", <-- Променя се стойността на статуса от active на completed
-                "category": [
-                    {
-                        "coding": [
-                            {
-                                "system": "http://terminology.elmediko.com/CodeSystem/medication-request-category",
-                                "code": "white"
-                            }
-                        ]
-                    }
-                ],
-                "medicationReference": {
-                    "reference": "Medication/12",
-                    "display": "AUGMENTIN FILM COATED TABLETS 875/125MG 14 - GSK - FILM COATED TABLETS"
-                },
-                "subject": {
-                    "reference": "Patient/13",
-                    "display": "ГЕОРГИ ДИМИТРОВ"
-                },
-                "requester": {
-                    "reference": "PractitionerRole/5",
-                    "display": "ГППМП - МКЦ \"Моят лекар\""
-                },
-                "recorder": {
-                    "reference": "Practitioner/4",
-                    "display": "д-р Иван Поляков"
-                },
-                "groupIdentifier": {
-                    "value": "0000000308"
-                },
-                "dosageInstruction": [
-                    {
-                        "text": "Да се приема по време на хранене",
-                        "doseAndRate": [
-                            {
-                                "doseQuantity": {
-                                    "value": 2,
-                                    "unit": "tablets"
-                                },
-                                "rateQuantity": {
-                                    "value": 12,
-                                    "unit": "daily"
-                                }
-                            }
-                        ],
-                        "maxDosePerAdministration": {
-                            "value": 7,
-                            "unit": "days"
-                        }
-                    }
-                ]
+        {   // Този обект винаги е един и същ. Промяната е само в request.url атрибута, която трябва да сочи ресурса за който се прави издаването на лекарството.
+            // В атрибута data се съхранява Base64 закодиран стринг на FHIR PATCH заявка
+            // В некодиран вид тя изглежда така: [{ "op": "replace", "path": "/status", "value": "completed" }]
+            // което означава промени стройността на атрибута status на "completed"
+            "resource": {
+                "resourceType": "Binary",
+                "contentType": "application/json-patch+json",
+                "data": "WwogIHsgIm9wIjogInJlcGxhY2UiLCAicGF0aCI6ICIvc3RhdHVzIiwgInZhbHVlIjogImNvbXBsZXRlZCIgfQpd"
             },
             "request": {
-                "method": "PUT", <-- Метода PUT съответства на ъпдейт заявка за ресурса
-                "url": "MedicationRequest/11" <-- Записва се id връзка към ресурса който трябва да се промени. Формата е 'Тип/ид'
+                "method": "PATCH",
+                "url": "MedicationRequest/11" <-- Записва се референцията за която се отнася лекарството
             }
         },
         {
             "fullUrl": "urn:uuid:aa4abd42-985b-461a-b15d-c15c04f5e634",
             "resource": {
                 "resourceType": "MedicationDispense",
-                "status": "completed",
-                "medicationReference": {
-                    "reference": "Medication/12", <-- Референция към лекарството, което е изписано по рецепта
+                "status": "completed", <-- Съответства на DispensionState@PharmaStarModel, Може да притежава следните статуси: preparation | in-progress | cancelled | on-hold | completed | entered-in-error | stopped | declined | unknown
+                "medicationReference": { <-- Референция към лекарството. Копира се от MedicationRequest.medicationReference
+                    "reference": "Medication/12", 
                     "display": "AUGMENTIN FILM COATED TABLETS 875/125MG 14"
                 },
-                "subject": {
-                    "reference": "Patient/13", <-- Референция към пациента
+                "subject": { <-- Референция към пациента, копира се от MedicationRequest.subject
+                    "reference": "Patient/13", 
                     "display": "ГЕОРГИ ДИМИТРОВ"
                 },
                 "receiver": {
                     "display": "Димитър Димитров" <-- Имена на човека получил лекартствата
                 },
-                "quantity": {
-                    "value": "2", <-- Количество на издаденото лекарство 
+                "quantity": { <-- Количество на издаденото лекарство
+                    "value": "2",  
                     "unit": "опаковки"
                 },
-                "authorizingPrescription": {
-                    "reference": "MedicationRequest/11" <-- Референция към MedicationRequest обекта
+                "authorizingPrescription": { <-- Референция към MedicationRequest обекта
+                    "reference": "MedicationRequest/11" 
+                },
+                "whenHandedOver" "2020-04-22T15:05:22.000Z" <-- Момента на издаване на лекраството,
+                "note": "Допълнителна информация - ако има нужда от такава",
+                "substitution": {
+                    "wasSubstituted": true,
+                    "reason": [
+                        {
+                            "text": "Причина за замяна на лекарството"
+                        } 
+                    ]
                 }
             },
             "request": {
@@ -395,131 +362,33 @@ curl --location --request POST 'http://consento-erx.kubocloud.io/fhir' \
 }'
 ```
 
-#### Издаване на лекарството по рецепта с реимбурсиране 
+#### Издаване на лекарство със заместване
 
-Издаването на рецепти по здравна каса е подобен на горния процес, няколко малки допълнения.
+Издаването на рецепти по здравна каса е подобен на горния процес, с няколко малки допълнения.
 
+##### Именовани пространства - Namespaces
 
-```
-public class Prescription : IData
-    {
-        public int Id { get; set; }
-        public string Barcode { get; set; } = string.Empty;
-        public int PrescriptionNo { get; set; } <- MedicationRequest.identifier[system==http://erx.e-health.bg/ns/prscr-id].value
-        public DateTime PrescriptionDate { get; set; } <- MedicationRequest.authoredOn
-        public int ProtocolNo { get; set; } <- MedicationRequest.basedOn(identifier[system==http://erx.e-health.bg/ns/prscr-id].value)*
-        public DateTime ProtocolDate { get; set; } <- MedicationRequest.basedOn(MedicationRequest.authoredOn)**
-        public int PrescriptionBookletNo { get; set; }
-        public int AmbSheetNo { get; set; }
-        public Doc Doctor { get; set; } = new Doc();
-        public Patient Patient { get; set; } = new Patient();
+Използват се при спецификацията на идентификатор. Дефинират уникалността на стойността на идентификатора 
+в именованото пространство.
 
-        public PartType Part { get; set; } = PartType.PartNone;
+| Именовано пространство  | Дефиниция |
+| ------------- | ------------- |
+| "http://erx.e-health.bg/ns/prescription-id" | Идентификатор на рецепта 
+| "http://erx.e-health.bg/ns/mr-id" | Идентификатор на ред от рецепта
+| "http://erx.e-health.bg/ns/booklet-id" | Идентификатор на рецептурна книжка
+| "http://erx.e-health.bg/ns/nhif-protocol-id" | Идентификатор на протокол за лекарства
+| "http://erx.e-health.bg/ns/uin" | УИН на доктор
+| "http://erx.e-health.bg/ns/rhif-id" | номер на лечебно заведение според РЗОК
+| "http://erx.e-health.bg/ns/bulstat" | ЕИК
+| "http://erx.e-health.bg/ns/nnbgr" | ЕГН
+| "http://erx.e-health.bg/ns/nnXXX" | Осигурителен номер към страна XXX където ХХХ е според ISO table 3166. *
+| "http://erx.e-health.bg/ns/bg-tpr" | ЛНЧ - личен номер на чужденец. *
+| "http://erx.e-health.bg/ns/bg-prc" | Номер на лична карта *
+*повечер информация тук: https://www.hl7.org/fhir/v2/0203/index.html
 
-        #region ... VETERAN ...
-
-        public string VeteranBookledNo { get; set; } = string.Empty;
-        public DateTime VeteranBookledDate { get; set; }
-        public string TerritorialExpertMedicalCommissionBookledNo { get; set; } = string.Empty;
-        public DateTime TerritorialExpertMedicalCommissionBookledDate { get; set; }
-
-        #endregion
-
-        #region ... DISPENSION ...
-
-        public DispensionState State { get; set; }
-        public bool IsDeleted { get; set; }
-
-        public DateTime DispensingDate { get; set; }
-        public PaymentWay WayOfPayment { get; set; }
-        public Pharmacist Pharmacist { get; set; }
-        public Pharmacy Pharmacy { get; set; }
-
-        #endregion
-
-        public List<PrescriptionRow> PrescriptionRows { get; set; } = new List<PrescriptionRow>();
-       
-	   //...
-    }
-
-public class Doc
-    {
-        public string SoftwareCode { get; set; } = string.Empty;
-        public string RhifCode { get; set; } = string.Empty;
-        public string PracticeNo { get; set; } = string.Empty;
-        public string Uin { get; set; } = string.Empty;
-        public string Specialty { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
-        public string Phone { get; set; } = string.Empty;
-    }
-	
-public class Patient
-    {
-        public string FirstName { get; set; } = string.Empty;
-        public string MiddleName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
-        public int Age { get; set; }
-        public string Egn { get; set; } = string.Empty;
-        public string Lnch { get; set; } = string.Empty;
-        public string Ssn { get; set; } = string.Empty;
-        public string PersId { get; set; } = string.Empty;
-        public string Address { get; set; } = string.Empty;
-        public string CertificateCountryCode { get; set; } = string.Empty;
-        public DateTime CertificateIssueDate { get; set; }
-        public DateTime CertificateValidFrom { get; set; }
-        public DateTime CertificateValidTo { get; set; }
-        public string CertificateNumber { get; set; } = string.Empty;
-        public string CertificateType { get; set; } = string.Empty;
-        public DateTime BirthDate { get; set; }
-        public string Sex { get; set; } = string.Empty;
-        public bool MaternityFlag { get; set; } = false;
-        public bool PregnancyFlag { get; set; } = false;
-    }
-
-public class PrescriptionRow
-    {
-        public int Line { get; set; }
-        public string NhifCode { get; set; } = string.Empty;
-        public string IcdCode { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public bool IsGeneric { get; set; } = false;
-        public int PrescribedQuantity { get; set; }
-        public int DispensionQuantity { get; set; }
-        public int NumberOfDays { get; set; }
-        public decimal? Price { get; set; }
-    }
-	
-public class Pharmacist
-    {
-        public string Uin { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;        
-    }
-	
-public class Pharmacy
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Number { get; set; } = string.Empty;
-        public string SoftwareCode { get; set; } = string.Empty;        
-    }
-	
-public enum PartType
-    {
-        PartA,
-        PartB,
-        PartC,
-        PartNone = 2147483647
-    }
-
-public enum PaymentWay
-    {
-        Pharmacy = 0,
-        Nhif = 1
-    }
-
-public enum DispensionState
-    {
-        Downloaded,
-        Finished
-    }
-
-```
+| Extension url  | Дефиниция |
+| ---------------| ----------|
+| "http://terminology.elmediko.com/Extension/nhif-branch" | Номер на лечебно заведение |
+| "http://terminology.elmediko.com/Extension/nhif-region" | Номер на район |
+| "http://terminology.elmediko.com/Extension/patient-maternity-flag" | за майчиноств на пациент |
+| "http://terminology.elmediko.com/Extension/patient-pregnancy-flag" | флаг за бременост |
