@@ -380,7 +380,8 @@ curl --location --request POST 'http://stagingerx.e-health.bg/fhir/' \
 | "http://erx.e-health.bg/ns/nhif-protocol-id" | Идентификатор на протокол за лекарства |
 | "http://erx.e-health.bg/ns/uin" | УИН на доктор |
 | "http://erx.e-health.bg/ns/rhif-id" | номер на лечебно заведение според РЗОК |
-| "http://erx.e-health.bg/ns/bulstat" | ЕИК
+| "http://erx.e-health.bg/ns/bulstat" | ЕИК |
+| "http://erx.e-health.bg/ns/enc-id" | Номер на амбулаторен лист |
 | "http://erx.e-health.bg/ns/nnbgr" | ЕГН |
 | "http://erx.e-health.bg/ns/nnXXX" | Осигурителен номер към страна XXX където ХХХ е според ISO table 3166. *|
 | "http://erx.e-health.bg/ns/bg-tpr" | ЛНЧ - личен номер на чужденец. * |
