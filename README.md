@@ -10,7 +10,7 @@ In order to read the medication prescription data and to dispense the requested 
 In order to signup with the system execute the following request:
 
 ```
-curl --location --request POST 'https://consento-erx.kubocloud.io/erx-ui/api/entry' \
+curl --location --request POST 'https://stagingerx.e-health.bg/erx-ui/api/entry' \
 --header 'Content-Type: application/json; charset=UTF-8' \
 --data-raw '{
     "user": {
@@ -110,7 +110,7 @@ The result will looks like:
 In order to access the system's resource you must get a Bearer token with a such query:
 
 ```
-curl --location --request POST 'https://consento-erx.kubocloud.io/erx-ui/api/entry' \
+curl --location --request POST 'https://stagingerx.e-health.bg/erx-ui/api/entry' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "user": {
@@ -137,7 +137,7 @@ You will receive the bearer token which is used against the all authenticated en
 In order to check the validity and the information behind the issued token, execute the following request:
 
 ```
-curl --location --request POST 'https://consento-erx.kubocloud.io/erx-ui/api/auth-entry' \
+curl --location --request POST 'https://stagingerx.e-health.bg/erx-ui/api/auth-entry' \
 --header 'Authorization: Bearer <access token>' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -236,7 +236,7 @@ to the prescription.
 The actual execution from the browser will be as follows:  
 
 ```
-curl --location --request GET 'https://consento-erx.kubocloud.io/erx-ui/api/prescription?identifier=0000000308&hash=65ae447fa6202741be085f53fac0c0241c1e496a39604e735f0c04e5c96f95a6&created=2020-04-15T12%3A30%3A52.568%2B00%3A00' \
+curl --location --request GET 'https://stagingerx.e-health.bg/erx-ui/api/prescription?identifier=0000000308&hash=65ae447fa6202741be085f53fac0c0241c1e496a39604e735f0c04e5c96f95a6&created=2020-04-15T12%3A30%3A52.568%2B00%3A00' \
 --header 'Content-Type: text/html'
 ```
 This will return the web page in mobile friendly format. 
@@ -244,7 +244,7 @@ However when the same request is executed with header "Content-type: application
 result will be different:
 
 ```
-curl --location --request GET 'https://consento-erx.kubocloud.io/erx-ui/api/prescription?identifier=0000000308&hash=65ae447fa6202741be085f53fac0c0241c1e496a39604e735f0c04e5c96f95a6&created=2020-04-15T12%3A30%3A52.568%2B00%3A00' \
+curl --location --request GET 'https://stagingerx.e-health.bg/erx-ui/api/prescription?identifier=0000000308&hash=65ae447fa6202741be085f53fac0c0241c1e496a39604e735f0c04e5c96f95a6&created=2020-04-15T12%3A30%3A52.568%2B00%3A00' \
 --header 'Content-Type: application/json; charset=UTF-8'
 ```
 
@@ -607,7 +607,7 @@ In most cases when the prescription has been issued it will have status of _acti
 - MedicationRequest.category
 MedicationRequest has a category attribute. The value of this attribute determines the type of the 
 prescription. The type is a CodeableConcept which is a simple code relative to FHIR's CodeSystem or ValueSet.
-All the values of the category attribute in the MedicationRequest can be found here "https://consento-erx.kubocloud.io/fhir/CodeSystem?name=Категории рецепти" 
+All the values of the category attribute in the MedicationRequest can be found here "https://stagingerx.e-health.bg/fhir/CodeSystem?name=Категории рецепти" 
 The categories are specified in the concept property of the CodeSystem resource. Each category has code, display and description.
 - MedicationRequest.priority - currently not used
 - MedicationRequest.doNotPerform - currently not used 
@@ -645,13 +645,13 @@ of the resource can be found here. The Bulgarians national identifier is tagged 
 #### Most useful search requests
 
 - search for prescriptions by identifier.  
-    GET https://consento-erx.kubocloud.io/fhir/MedicationRequest?identifier=<identifier.value>&_include=* 
+    GET https://stagingerx.e-health.bg/fhir/MedicationRequest?identifier=<identifier.value>&_include=* 
 - search for prescriptions issued by a doctor specified by UIN.  
-    GET https://consento-erx.kubocloud.io/fhir/MedicationRequest?requester.identifier=<identifier.value>&_include=* 
+    GET https://stagingerx.e-health.bg/fhir/MedicationRequest?requester.identifier=<identifier.value>&_include=* 
 - search for prescriptions issued by a doctor specified by а part of the name.  
-    GET https://consento-erx.kubocloud.io/fhir/MedicationRequest?requester.name=Поляков&_include=* 
+    GET https://stagingerx.e-health.bg/fhir/MedicationRequest?requester.name=Поляков&_include=* 
 - search for prescriptions issued to a patient  
-    GET https://consento-erx.kubocloud.io/fhir/MedicationRequest?patient.identifier=<identifier.value>&_include=*
+    GET https://stagingerx.e-health.bg/fhir/MedicationRequest?patient.identifier=<identifier.value>&_include=*
 
 #### Reverse searches
 
@@ -660,7 +660,7 @@ attached as DocumentReference resource with relation to the MedicationRequest. T
 a reference to the file. This is the reason why we should execute a reverse search. For example in order to find the 
 PDF printed attachment of the prescription issue the following request:
 
-GET https://consento-erx.kubocloud.io/fhir/MedicationRequest?patient.identifier=<identifier.value>&_include=*&_revinclude=*  
+GET https://stagingerx.e-health.bg/fhir/MedicationRequest?patient.identifier=<identifier.value>&_include=*&_revinclude=*  
 
 You will receive a Bundle with the same resources as it was in the previous requests but with one additional. The DocumentReference 
 resource specifies the metadata of the prescription attached as file.
@@ -672,7 +672,7 @@ The actual dispense should make two changes into the database. The both changes 
 Create FHIR bundle with type of transaction:
 
 ```
-curl --location --request POST 'http://consento-erx.kubocloud.io/fhir' \
+curl --location --request POST 'http://stagingerx.e-health.bg/fhir' \
 --header 'Authorization: Bearer <token>' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -801,7 +801,7 @@ Sometimes the preparation of the medication is more time consuming task. In thes
 to create a MedicationDispense with different state which can be updated after along with the process of the preparation of the medication.
 
 ```
-curl --location --request PATCH 'https://consento-erx.kubocloud.io/fhir/MedicationRequest/13' 
+curl --location --request PATCH 'https://stagingerx.e-health.bg/fhir/MedicationRequest/13' 
 --header 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOjU5NSwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJyb2xlcyI6W3sicm9sZSI6IlJPTEVfVVNFUiIsImNsaWVudCI6Imxtc3dlYiJ9LHsicm9sZSI6IlJPTEVfRE9DVE9SIiwiY2xpZW50IjoibG1zd2ViIn1dLCJpc3MiOiJodHRwczovL2VsbWVkaWtvLmNvbSIsImdpdmVuX25hbWUiOiLQkNC70LXQutGB0LDQvdC00YrRgCIsImNsaWVudF9pZCI6Imxtc3dlYiIsInBpY3R1cmUiOm51bGwsInNjb3BlIjoiKi8qLioiLCJwaG9uZV9udW1iZXIiOm51bGwsImV4cCI6MTU4NjkwMDQwNSwiZmFtaWx5X25hbWUiOiLQkNC70LXQutGB0LjQtdCyIiwiZW1haWwiOiJhbGV4YW5kZXIuYWxleGlldkBlLWhlYWx0aC5iZyIsInVzZXJuYW1lIjoiYWxleEBzYXQifQ.3sZOw5GbNtbGJ3Zav_Wi_ZouSj_d7E_CVuluVJR1d_1l6qflKBbtTd98T0fynhKLICHLySHnSNeZ7Xj3ssYKKA' 
 --header 'Content-Type: application/json-patch+json' 
 --header 'Content-Type: application/json' 
@@ -821,4 +821,4 @@ These are few best practices which should be taken into consideration when worki
  a Json send both the Accept and Content-type headers in the requests.  
 
 #### Additional resources
-- eRx-ui Swagger - https://consento-erx.kubocloud.io/erx-ui/swagger-ui/
+- eRx-ui Swagger - https://stagingerx.e-health.bg/erx-ui/swagger-ui/
