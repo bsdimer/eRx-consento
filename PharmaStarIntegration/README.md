@@ -367,6 +367,239 @@ curl --location --request POST 'http://stagingerx.e-health.bg/fhir/' \
 Издаването на рецепти по здравна каса е подобен на горния процес, с няколко малки допълнения.
 // ToDo:
 
+
+#### Работа с протоколи за лекарства
+
+За да направите търсене за протокол за лекарство по идентификатор изпълнете:
+```
+https://stagingerx.e-health.bg/fhir/MedicationRequest?identifier=http://erx.e-health.bg/ns/nhif-protocol-id|100002
+```
+където http://erx.e-health.bg/ns/nhif-protocol-id е именованото пространство за идентификатори на протоколи, 100002 е номера на 
+конкретния протокол. При това търсене резултата ще бъде Bundle с 4 ресурса от тип MedicationRequest. Два от резултатите са
+с категория nhif-protocol и два с категория nhif.  
+Протокола сам по себе си е MedicationRequest с категория "nhif-protocol". Идентификаторите на всеки MedicationRequest могат да бъдат описани по следния начин:
+
+```
+...
+
+
+{
+        "resourceType": "MedicationRequest",
+        "id": "3995",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2020-04-27T12:00:46.977+00:00",
+          "source": "#5e50589f-cc52-46"
+        },
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/nhif-protocol-id",
+            "value": "100002"  // Номер на протокол
+          },
+          {
+            "system": "http://erx.e-health.bg/ns/mr-id",
+            "value": "100002-1"  // Идентификатор на конкретния ред в протокола описващ едно лекарство
+          }
+        ],
+        "status": "active",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
+                "code": "nhif-protocol" // Категория оказваща че това е запис на лекарство в състава на протокола
+              }
+            ]
+          }
+        ],
+        "medicationReference": {
+          "reference": "Medication/695",
+          "display": "ZYRTEC FILM COATED TABLETS 10MG 10"
+        },
+        "subject": {
+          "reference": "Patient/314",
+          "display": "ГЕОРГИ ДИМИТРОВ"
+        },
+        "encounter": {
+          "reference": "Encounter/3781"
+        },
+        "authoredOn": "2020-01-01T00:00:00.000Z",
+        "requester": {
+          "reference": "PractitionerRole/311",
+          "display": "ГППМП - МКЦ \"Моят лекар\""
+        },
+        "recorder": {
+          "reference": "Practitioner/310",
+          "display": "д-р Иван Поляков"
+        },
+        "reasonCode": [
+          {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/sid/icd-10",
+                "code": "J30.1" // Код на диагноза за протокола
+              }
+            ]
+          }
+        ],
+        "groupIdentifier": {
+          "value": "100002"
+        },
+        "dosageInstruction": [
+          {
+            "doseAndRate": [
+              { // Дневна доза
+                "doseQuantity": {
+                  "value": 1,
+                  "unit": "tablets"
+                },
+                "rateQuantity": {
+                  "value": 2, // Да се чете - два пъти на ден
+                  "unit": "daily"
+                }
+              },
+              { // Месечна доза доза
+                "rateRatio": {
+                  "numerator": {
+                    "value": 61,
+                    "unit": "tablets"
+                  },
+                  "denominator": {
+                    "unit": "monthly" // Да се чете месечно
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "dispenseRequest": {
+          "validityPeriod": {
+            "start": "2020-01-01T00:00:00.000Z",
+            "end": "2020-06-01T00:00:00.000Z" // Период на валидност на протокола
+          }
+        }
+      }
+...
+```
+
+Когато при това търсене категорията на MedicationRequest-a е с код "nhif" то това е ред от рецепта издаден към кокнретния протокол. 
+Идентификатора на протокола към който е издадена може да се вземе от идентификатора със система *"system": "http://erx.e-health.bg/ns/nhif-protocol-id"*,   
+Например следния ресурс може да бъде обяснен по следния начин:
+
+```
+...
+      {
+        "resourceType": "MedicationRequest",
+        "id": "3998",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2020-04-27T12:15:13.033+00:00",
+          "source": "#f26ea636-2e28-4a"
+        },
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/prescription-id",
+            "value": "ERXP20200429000001" // Идентификатор на рецептата. Четвъртия символ в нея (P) указва че това е рецепта издадена по протокол
+          },
+          {
+            "system": "http://erx.e-health.bg/ns/mr-id",
+            "value": "ERXP20200429000001-A2" // Идентификатор на реда в рецептата - изписан е на втора позиция 
+          },
+          {
+            "system": "http://erx.e-health.bg/ns/nhif-protocol-id",
+            "value": "100002" // Идентифиактор на протокола по който е издадена рецептата
+          },
+          {
+            "system": "http://erx.e-health.bg/ns/mr-id",
+            "value": "100002-1" // Идентификатор на реда от протокола по който е издадена рецептата
+          }
+        ],
+        "status": "active",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
+                "code": "nhif"  // Рецепта по НЗОК. Комбинацията на това поле с идентификатор със система "http://erx.e-health.bg/ns/nhif-protocol-id" указва че това е ред от рецепта издадена по протокол.
+              }
+            ]
+          }
+        ],
+        "medicationReference": {
+          "reference": "Medication/696",
+          "display": "FLAREX EYE DROPS 0.1% 5ML 1"
+        },
+        "subject": {
+          "reference": "Patient/314",
+          "display": "ГЕОРГИ ДИМИТРОВ"
+        },
+        "encounter": {
+          "reference": "Encounter/3781"
+        },
+        "authoredOn": "2020-04-29T00:00:00.000Z",
+        "requester": {
+          "reference": "PractitionerRole/311",
+          "display": "ГППМП - МКЦ \"Моят лекар\""
+        },
+        "recorder": {
+          "reference": "Practitioner/310",
+          "display": "д-р Иван Поляков"
+        },
+        "reasonCode": [
+          {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/sid/icd-10",
+                "code": "H16.0" // Диагноза по която се издава рецептата
+              }
+            ]
+          }
+        ],
+        "groupIdentifier": {
+          "value": "ERXP20200429000001"
+        },
+        "dosageInstruction": [
+          {
+            "text": "вечер преди лягане",
+            "doseAndRate": [
+              {  // Дозировка на лекарството, описана в полето "S." на бланката за рецепта. Най-често това се показва като "S. 1 x 1"  
+                "doseQuantity": {
+                  "value": 1, 
+                  "unit": "drop"
+                },
+                "rateQuantity": {
+                  "value": 1,
+                  "unit": "daily"
+                }
+              }
+            ]
+          }
+        ],
+        "dispenseRequest": {
+          "quantity": {
+            "value": 1, // Брой опаковки на лекарството отпуснати по тази рецепта. Това поле интерпретира стойността "D." в бланката на рецептата
+            "unit": "pack"
+          }
+        },
+        "substitution": {
+          "allowedBoolean": true
+        }
+      }
+...
+```
+##### Често използвани заявки за търсене
+
+- Търсене на всички рецепти издадени по протокол с номер 100002, заедно с прилежащите им ресурси 
+GET https://stagingerx.e-health.bg/fhir/MedicationRequest?identifier=http://erx.e-health.bg/ns/nhif-protocol-id|100002&_include=*
+
+- Търсене на всички рецепти издадени по рецептурна книжка, заедно с прилжащите им ресурси
+GET https://stagingerx.e-health.bg/fhir/MedicationRequest?identifier=http://erx.e-health.bg/ns/booklet-id&_include=*
+Както се забелязава по горните два примера търсенето по идентификатор представлява комбинация GET атрибут включващ името на именованото пространство и стойността на идентификатора разделени със символа "|"
+Стойността на именованото пространство се записва в ляво, а стойността на идентификатора от дясно. Ако някой от тях се пропусне то търсенето става само по единия атрибут.
+Странициранетпо по подразбиране е 20 елемента от колекцията в която се търси. 
+
+// ToDo: 
+
 ##### Именовани пространства - Namespaces
 
 Използват се при спецификацията на идентификатор. Дефинират уникалността на стойността на идентификатора 
