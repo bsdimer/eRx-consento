@@ -71,7 +71,7 @@ Body:
                 "credentials": [
                     {
                         "type": "password",
-                        "value": "bf4c8738-bafc-452b-8cf1-c8ef52e42444"
+                        "value": "<omitted>"
                     }
                 ]
             }
