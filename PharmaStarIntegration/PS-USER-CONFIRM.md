@@ -25,18 +25,18 @@ Body:
                         "value": "sd:Youroery8u"
                     }
                 ],
-                "email": "triphon@gbg.bg",
+                "email": "user@email.com",
                 "firstName": "Triphon",
                 "lastName": "Test",
-                "username": "triphon-test"
+                "username": "user-test"
             }
         ],
         "pharmacyRegRq": {
             "address": "Test street 9",
             "city": "Sofia",
             "district": "Sofia",
-            "pharmacistFamilyName": "Test",
-            "pharmacistFirstName": "Triphon",
+            "pharmacistFamilyName": "Doe",
+            "pharmacistFirstName": "John",
             "pharmacyName": "TEST PHARMACY",
             "pharmacyNo": "NO12345678",
             "phone": "+359 222222",
