@@ -26,8 +26,8 @@ Body:
                     }
                 ],
                 "email": "user@email.com",
-                "firstName": "Triphon",
-                "lastName": "Test",
+                "firstName": "John",
+                "lastName": "Doe",
                 "username": "user-test"
             }
         ],
