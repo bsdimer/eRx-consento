@@ -36,7 +36,7 @@ Body:
                 ]
             }
         ],
-        "action": "LOGIN",
+        "action": "LOGIN"
     }
 }
 ```
