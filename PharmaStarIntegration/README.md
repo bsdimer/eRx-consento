@@ -1,7 +1,6 @@
-# eRx <-> PharmaStar
-eRx Consento - интеграция с ФармаСтар
+# eRx <-> PharmaStar API v1.0
 
-Този документ описва интеграцията на модела на данните на eRx Consento с модела на данните на приложението ФармаСтар
+Този документ описва интеграционния подход и начин на работа на eRx-Pharmastar REST API v1.0
 
 ### Общо описание за работата с REST API адаптера
 
@@ -23,9 +22,52 @@ eRx Consento - интеграция с ФармаСтар
 отговора зависи от стойността на хидъра `Accept-Language`, който се изпраща в заявката. Примерни стойности могат да бъдат `Accept-Language: bg-BG` 
 или `Accept-Language: en-EN`. За сега API поддържа само тези два езика. 
 
-##### Пример за успешна заявката:
+##### Примерен резултат на успешна заявката:
+```
+HTTP/1.1 200 OK
+Server: nginx/1.17.9
+Date: Thu, 04 Jun 2020 16:32:18 GMT
+Content-Type: application/json
+Content-Length: 1032
+Connection: keep-alive
+access-control-allow-origin: *
+x-envoy-upstream-service-time: 8
 
-##### Пример за неуспешна заявка:
+{
+  "result": {
+    "user": {
+      "token": "<admin user token>"
+    }
+  },
+  "success": true,
+  "errors": []
+}
+```
+
+##### Пример резултат наа неуспешна заявка:
+
+```
+HTTP/1.1 200 OK
+Server: nginx/1.17.9
+Date: Thu, 04 Jun 2020 16:32:18 GMT
+Content-Type: application/json
+Content-Length: 1032
+Connection: keep-alive
+access-control-allow-origin: *
+x-envoy-upstream-service-time: 8
+
+{
+  "result": null,
+  "success": false,
+  "errors": [
+    {
+      "message": "Грешно потребителко име или парола",
+      "key": "{user.login.failed}"
+    }
+  ]
+}
+
+```
 
 ##### Други грешки - некасаещи бизнес логиката на системата
 
@@ -293,7 +335,7 @@ x-envoy-upstream-service-time: 8
 {
   "result": {
     "user": {
-      "token": "<token цонтент>"
+      "token": "<token content>"
     }
   },
   "success": true,
