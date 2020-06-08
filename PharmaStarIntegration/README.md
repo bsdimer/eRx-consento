@@ -13,8 +13,11 @@
   "errors": {path: string, message: string, key: string}[]
 }
 ``` 
-* в атрибута `success` е закодиран крайния резултат на операцията под формата на булева стойност, т.е. дали операцията е успешна или не
-* атрибута `result` е контейнер за данните върнати от изпълнението на заявката
+* в атрибута `success` е закодиран крайния резултат на операцията под формата на булева стойност, т.е. дали операцията е успешна или не. 
+**Стойността на този атрибут трябва да се разбира и като грешка в бизнес логиката на API.** Например при търсене на рецепта
+резултата може да бъде `success: false` в случаите, когато липсват резултатите по зададения идентификатор. При този случай
+в резултатния масив на грешките ще присъства една грешка с описание за липсваща рецепта със зададеното id.   
+* атрибута `result` е контейнер за данните върнати от изпълнението на заявката.
 * при наличие на грешки в атрибута errors се попълва масив от грешки касаещи изпълнението на заявката. Всяка грешка е под формата на обект
 притежаващ атрибутите `path`, `message` и `key`. `path` е незадължителен атрибут указващ пътя на променливата, която е с невалидна стойност. 
 Всички валидационни грешки притежават такъв атрибут. Понякога обаче този атрибут може да бъде празен, тъй като грешката на касае и не реферира
@@ -514,7 +517,7 @@ curl --location --request GET 'https://stagingerx.e-health.bg/fhir/erx-phs/api/p
 
 Резултата от търсенето е масив от рецепти. Стойността е масив тъй като идентификатора сам по себе си в сложна стойност 
 интегрираща в себе си множество данни. Така например рецептата по НЗОК по бланка 5А притежава собствен групов идентификатор
-който позволява да бъдат намерени всички рецепти по тази бланка. В най-общия случай търсенете ще бъде по идентификатор на конректната
+който позволява да бъдат намерени всички рецепти по тази бланка. В най-общия случай търсенето ще бъде по идентификатор на конректната
 рецепта и резултата ще бъде масив от една рецепта. 
 
 ```
@@ -526,8 +529,8 @@ curl --location --request GET 'https://stagingerx.e-health.bg/fhir/erx-phs/api/p
         "MiddleName": "ТОДОРОВ",
         "LastName": "ДИМИТРОВ",
         "Age": 43,
-        "Egn": "7703022402",
-        "Lnch": "100000002",
+        "Egn": "<omitted>",
+        "Lnch": "<omitted>",
         "Ssn": null,
         "PersId": null,
         "Address": null,
@@ -548,10 +551,10 @@ curl --location --request GET 'https://stagingerx.e-health.bg/fhir/erx-phs/api/p
       "Doctor": {
         "SoftwareCode": null,
         "RhifCode": null,
-        "PracticeNo": "2210113508",
-        "Uin": "2300013314",
+        "PracticeNo": "<omitted>",
+        "Uin": "<omitted>",
         "Specialty": "00",
-        "Name": "д-р Иван Поляков",
+        "Name": "д-р John The Docor",
         "Phone": "088888880"
       },
       "VeteranBookledDate": null,
@@ -592,6 +595,7 @@ curl --location --request GET 'https://stagingerx.e-health.bg/fhir/erx-phs/api/p
       "Barcode": "ERXN20200423000002А",
       "ProtocolNo": null,
       "PrescriptionDate": "2020-01-01T00:00:00",
+      "PreviousPartDate":  null,
       "VeteranBookledNo": null,
       "Part": "PartA"
     }
@@ -629,8 +633,8 @@ access-control-allow-origin: *
 x-envoy-upstream-service-time: 8
 
 {
-    "user": null,
-    "auth": null,
+    "result": null,
+    "success": false,
     "errors": [
         {
             "path": null,
@@ -642,7 +646,7 @@ x-envoy-upstream-service-time: 8
 
 ```
 
-__При липсваща рецепта по зададен идентификатор се връща празен масив.__
+При липсваща рецепта по зададен идентификатор се връща следния отговор:
 
 ```
 HTTP/1.1 200 OK
@@ -655,14 +659,233 @@ access-control-allow-origin: *
 x-envoy-upstream-service-time: 8
 
 {
-  "result": [
-  ],
-  "success": true,
+  "result": [],
+  "success": false,
   "errors": [
-  ]
+          {
+              "path": null,
+              "message": "Липсва рецепта по зададените критерии",
+              "key": "{missing.prescription}"
+          }
+      ]
 }
 
 ```
 
 #### Изписване на лекарсто по рецепта
 
+При изписване на лекарствата в аптеката се изпълнява заявка от вида:
+
+```
+Request method:	POST
+Request URI:	https://stagingerx.e-health.bg/fhir/erx-phs/api/prescription
+Proxy:			<none>
+Request params:	<none>
+Query params:	<none>
+Form params:	<none>
+Path params:	<none>
+Headers:		Cache-Control=no-cache
+                Accept-Language: bg-BG
+				Accept=*/*
+				Content-Type=application/json; charset=UTF-8
+Cookies:		<none>
+Multiparts:		<none>
+Body:
+{
+    "State": null,
+    "Id": null,
+    "PrescriptionNo": "ERXN20200423000001А",
+    "Barcode": "ERXN20200423000001А",
+    "ProtocolNo": null,
+    "PrescriptionDate": "2020-01-01T00:00:00",
+    "VeteranBookledNo": null,
+    "Part": "PartNone",
+    "Patient": {
+        "FirstName": "ГЕОРГИ",
+        "MiddleName": "ТОДОРОВ",
+        "LastName": "ДИМИТРОВ",
+        "Age": 43,
+        "Egn": "<omitted>",
+        "Lnch": "<omitted>",
+        "Ssn": null,
+        "PersId": null,
+        "Address": null,
+        "CertificateCountryCode": null,
+        "CertificateIssueDate": null,
+        "CertificateValidFrom": null,
+        "CertificateValidTo": null,
+        "CertificateNumber": null,
+        "CertificateType": null,
+        "BirthDate": "2020-01-01T00:00:00",
+        "Sex": "male",
+        "MaternityFlag": false,
+        "PregnancyFlag": false
+    },
+    "Doctor": {
+        "SoftwareCode": null,
+        "RhifCode": null,
+        "PracticeNo": "<omitted>",
+        "Uin": "<omitted>",
+        "Specialty": "00",
+        "Name": "д-р John The Doctor",
+        "Phone": "088888880"
+    },
+    "VeteranBookledDate": null,
+    "ProtocolDate": null,
+    "PrescriptionBookletNo": 1080005,
+    "AmbSheetNo": 12580,
+    "PrescriptionRows": [
+        {
+            "Line": 0,
+            "NhifCode": "RF034",
+            "IcdCode": "J30.1",
+            "Description": "ZYRTEC FILM COATED TABLETS 10MG 10",
+            "IsGeneric": false,
+            "PrescribedQuantity": 2,
+            "DispensionQuantity": 1,
+            "NumberOfDays": 7,
+            "Price": null
+        },
+        {
+            "Line": 1,
+            "NhifCode": "SF083",
+            "IcdCode": "H16.0",
+            "Description": "FLAREX EYE DROPS 0.1% 5ML 1",
+            "IsGeneric": true,
+            "PrescribedQuantity": 1,
+            "DispensionQuantity": 2,
+            "NumberOfDays": 10,
+            "Price": null
+        }
+    ],
+    "TerritorialExpertMedicalCommissionBookledNo": null,
+    "TerritorialExpertMedicalCommissionBookledDate": null,
+    "IsDeleted": null,
+    "DispensingDate": "2020-06-02T00:00:00+03:00",
+    "WayOfPayment": null,
+    "Pharmacist": null,
+    "Pharmacy": null
+}
+```
+Като валидациите за обекта са:
+* PrescriptionNo @NotBlank (??? Barcode или PrescriptionNo е полето по което се търси рецептата ???) 
+* size(PrescriptionRows) > 0
+* PrescriptionRows[*][DispensionQuantity] > 0
+
+Отговора при успешно изпълнение на операцията е: 
+```
+HTTP/1.1 200 OK
+Server: nginx/1.17.9
+Date: Thu, 04 Jun 2020 16:32:18 GMT
+Content-Type: application/json
+Content-Length: 1032
+Connection: keep-alive
+access-control-allow-origin: *
+x-envoy-upstream-service-time: 8
+
+{
+  "result": {
+    "State": null,
+    "Id": null,
+    "PrescriptionNo": "ERXN20200423000001А",
+    "Barcode": "ERXN20200423000001А",
+    "ProtocolNo": null,
+    "PrescriptionDate": "2020-01-01T00:00:00",
+    "VeteranBookledNo": null,
+    "Part": "PartNone",
+    "Patient": {
+      "FirstName": "ГЕОРГИ",
+      "MiddleName": "ТОДОРОВ",
+      "LastName": "ДИМИТРОВ",
+      "Age": 43,
+      "Egn": "<omitted>",
+      "Lnch": "<omitted>",
+      "Ssn": null,
+      "PersId": null,
+      "Address": null,
+      "CertificateCountryCode": null,
+      "CertificateIssueDate": null,
+      "CertificateValidFrom": null,
+      "CertificateValidTo": null,
+      "CertificateNumber": null,
+      "CertificateType": null,
+      "BirthDate": "2020-01-01T00:00:00",
+      "Sex": "male",
+      "MaternityFlag": false,
+      "PregnancyFlag": false
+    },
+    "Doctor": {
+      "SoftwareCode": null,
+      "RhifCode": null,
+      "PracticeNo": "<omitted>",
+      "Uin": "<omitted>",
+      "Specialty": "00",
+      "Name": "д-р John The Doctor",
+      "Phone": "088888880"
+    },
+    "VeteranBookledDate": null,
+    "ProtocolDate": null,
+    "PrescriptionBookletNo": 1080005,
+    "AmbSheetNo": 12580,
+    "PrescriptionRows": [
+      {
+        "Line": 0,
+        "NhifCode": "RF034",
+        "IcdCode": "J30.1",
+        "Description": "ZYRTEC FILM COATED TABLETS 10MG 10",
+        "IsGeneric": false,
+        "PrescribedQuantity": 2,
+        "DispensionQuantity": 1,
+        "NumberOfDays": 7,
+        "Price": null
+      },
+      {
+        "Line": 1,
+        "NhifCode": "SF083",
+        "IcdCode": "H16.0",
+        "Description": "FLAREX EYE DROPS 0.1% 5ML 1",
+        "IsGeneric": true,
+        "PrescribedQuantity": 1,
+        "DispensionQuantity": 2,
+        "NumberOfDays": 10,
+        "Price": null
+      }
+    ],
+    "TerritorialExpertMedicalCommissionBookledNo": null,
+    "TerritorialExpertMedicalCommissionBookledDate": null,
+    "IsDeleted": null,
+    "DispensingDate": "2020-06-02T00:00:00+03:00",
+    "WayOfPayment": null,
+    "Pharmacist": null,
+    "Pharmacy": null
+  },
+  "success": true,
+  "errors": []
+}
+```
+
+При липсваща рецепта по зададен идентификатор се връща следния отговор:
+
+```
+HTTP/1.1 200 OK
+Server: nginx/1.17.9
+Date: Thu, 04 Jun 2020 16:32:18 GMT
+Content-Type: application/json
+Content-Length: 1032
+Connection: keep-alive
+access-control-allow-origin: *
+x-envoy-upstream-service-time: 8
+
+{
+  "result": [],
+  "success": false,
+  "errors": [
+          {
+              "path": null,
+              "message": "Липсва рецепта по зададените критерии",
+              "key": "{missing.prescription}"
+          }
+      ]
+}
+
+```
