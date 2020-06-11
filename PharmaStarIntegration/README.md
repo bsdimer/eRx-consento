@@ -8,24 +8,24 @@
 
 ```
 {
-  "result": any,
-  "success": boolean,
-  "errors": {path: string, message: string, key: string}[]
+  "Result": any,
+  "Success": boolean,
+  "Errors" [{Path: string, Message: string, Key: string}]
 }
 ``` 
 * в атрибута `success` е закодиран крайния резултат на операцията под формата на булева стойност, т.е. дали операцията е успешна или не. 
 **Стойността на този атрибут трябва да се разбира и като грешка в бизнес логиката на API.** Например при търсене на рецепта
 резултата може да бъде `success: false` в случаите, когато липсват резултатите по зададения идентификатор. При този случай
 в резултатния масив на грешките ще присъства една грешка с описание за липсваща рецепта със зададеното id.   
-* атрибута `result` е контейнер за данните върнати от изпълнението на заявката.
+* атрибута `Result` е контейнер за данните върнати от изпълнението на заявката.
 * при наличие на грешки в атрибута errors се попълва масив от грешки касаещи изпълнението на заявката. Всяка грешка е под формата на обект
-притежаващ атрибутите `path`, `message` и `key`. `path` е незадължителен атрибут указващ пътя на променливата, която е с невалидна стойност. 
+притежаващ атрибутите `Path`, `Message` и `Key`. `Path` е незадължителен атрибут указващ пътя на променливата, която е с невалидна стойност. 
 Всички валидационни грешки притежават такъв атрибут. Понякога обаче този атрибут може да бъде празен, тъй като грешката на касае и не реферира
-конкретни данни от заявката. Атрибута `message` е информативно поле описващо причината за настъпване на грешката. Езикът на който се връща
+конкретни данни от заявката. Атрибута `Message` е информативно поле описващо причината за настъпване на грешката. Езикът на който се връща
 отговора зависи от стойността на хидъра `Accept-Language`, който се изпраща в заявката. Примерни стойности могат да бъдат `Accept-Language: bg-BG` 
 или `Accept-Language: en-EN`. За сега API поддържа само тези два езика. 
 
-???  Трябва ли атрибута `errors:[]` да присъства винаги, без значение че грешки липсват? Същото се отнася и за `result:` в случаите, когато 
+???  Трябва ли атрибута `Errors:[]` да присъства винаги, без значение че грешки липсват? Същото се отнася и за `Result:` в случаите, когато 
 резултата е `success: false`.
 
 ##### Примерен резултат на успешна заявката:
@@ -40,13 +40,13 @@ access-control-allow-origin: *
 x-envoy-upstream-service-time: 8
 
 {
-  "result": {
-    "user": {
-      "token": "<admin user token>"
+  "Result": {
+    "User": {
+      "Token": "<admin user token>"
     }
   },
-  "success": true,
-  "errors": []
+  "Success": true,
+  "Errors" []
 }
 ```
 
@@ -63,12 +63,12 @@ access-control-allow-origin: *
 x-envoy-upstream-service-time: 8
 
 {
-  "result": null,
-  "success": false,
-  "errors": [
+  "Result": null,
+  "Success": false,
+  "Errors" [
     {
-      "message": "Грешно потребителко име или парола",
-      "key": "{user.login.failed}"
+      "Message" "Грешно потребителко име или парола",
+      "Key" "{user.login.failed}"
     }
   ]
 }
@@ -95,7 +95,7 @@ x-envoy-upstream-service-time: 8
 1. Вземане на автентикационен токен за администратор. Изпълнение на POST заявка със следните данни:
 ```
 Request method:	POST
-Request URI:	https://stagingerx.e-health.bg/erx-ui/api/entry
+Request URI:	https://stagingerx.e-health.bg/fhir/erx-phs/api/entry
 Proxy:			<none>
 Request params:	<none>
 Query params:	<none>
@@ -108,19 +108,19 @@ Cookies:		<none>
 Multiparts:		<none>
 Body:
 {
-    "user": {
-        "data": [
+    "User": {
+        "Data": [
             {
-                "username": "pharmacist001",
-                "credentials": [
+                "Username": "pharmacist001",
+                "Credentials": [
                     {
-                        "type": "password",
-                        "value": "<omitted>"
+                        "Type": "password",
+                        "Value": "<omitted>"
                     }
                 ]
             }
         ],
-        "action": "LOGIN"
+        "Action": "LOGIN"
     }
 }
 ```
@@ -136,13 +136,13 @@ access-control-allow-origin: *
 x-envoy-upstream-service-time: 8
 
 {
-  "result": {
-    "user": {
-      "token": "<admin user token>"
+  "Result": {
+    "User": {
+      "Token": "<admin user token>"
     }
   },
-  "success": true,
-  "errors": []
+  "Success": true,
+  "Errors" []
 }
 ```
 
@@ -153,7 +153,7 @@ x-envoy-upstream-service-time: 8
 3. Стъпка в - изполазвайте полученият токен за да изпълните нова заявка за създаване на краен потреботел:
 ```
 Request method: POST
-Request URI:    https://stagingerx.e-health.bg/erx-ui/api/auth-entry
+Request URI:    https://stagingerx.e-health.bg/fhir/erx-phs/api/auth-entry
 Proxy:                  <none>
 Request params: <none>
 Query params:   <none>
@@ -167,45 +167,53 @@ Cookies:                <none>
 Multiparts:             <none>
 Body:
 {
-    "auth": {
-        "data": [
+    "Auth": {
+        "Data": [
             {
-                "username": "test2",
-                "enabled": true,
-                "firstName": "John",
-                "lastName": "Doe",
-                "email": "user@e-health.bg",
-                "credentials": [
+                "Username": "test77",
+                "Enabled": true,
+                "FirstName": "John",
+                "LastName": "Doe",
+                "Email": "user77@e-health.bg",
+                "Credentials": [
                     {
-                        "type": "password",
-                        "value": "passworString"
+                        "Type": "password",
+                        "Value": "<omitted>"
                     }
                 ],
-                "clientRoles": {
+                "ClientRoles": {
                     "erx-resource-server": [
                         "pharmastar_user"
                     ]
                 }
             }
         ],
-        "action": "CREATE",
-        "pharmacyRegRq": {
-            "address": "Test street 9",
-            "state": null,
-            "district": "Sofia",
-            "city": "Sofia",
-            "vatNumber": "123456789",
-            "phone": "+359 222222",
-            "pharmacyNo": "NO12345678",
-            "pharmacyName": "TEST PHARMACY",
-            "pharmacistFirstName": "John",
-            "pharmacistFamilyName": "Doe"
+        "Action": "CREATE",
+        "PharmacyRegRq": {
+            "Address": "Test street 9",
+            "State": null,
+            "District": "Sofia",
+            "City": "Sofia",
+            "VatNumber": "123456789",
+            "Phone": "+359 222222",
+            "PharmacyNo": "NO12345678",
+            "PharmacyName": "TEST PHARMACY",
+            "PharmacistFirstName": "John",
+            "PharmacistFamilyName": "Doe"
         }
     }
 }
-
 ```
-
+**Обърнете внимание на това че `erx-resource-server` е с малка буква**
+```
+...
+"ClientRoles": {
+   "erx-resource-server": [
+        "pharmastar_user"
+    ]
+}
+...
+```
 Резултата от тази заявка ще бъде винаги `200 OK` като в отговора ще се съдържа информация за направената регистрация: 
 Пример за успешна регистрация:
 ```
@@ -219,20 +227,20 @@ access-control-allow-origin: *
 x-envoy-upstream-service-time: 8
 
 {
-  "result": {
-    "user": {
-      "result": [
+  "Result": {
+    "User": {
+      "Result": [
         {
-          "id": "4f6dffa7-a0d5-4119-a0c5-07b0ae05ac29",
-          "createdTimestamp": 1590039593854,
-          "username": "test2",
-          "enabled": true,
-          "totp": false,
-          "emailVerified": false,
-          "firstName": "John",
-          "lastName": "Doe",
-          "email": "user@e-health.bg",
-          "attributes": {
+          "Id": "51ad3444-137d-48bb-b332-ac189b0f60d6",
+          "CreatedTimestamp": 1591863107192,
+          "Username": "test77",
+          "Enabled": true,
+          "Totp": false,
+          "EmailVerified": false,
+          "FirstName": "John",
+          "LastName": "Doe",
+          "Email": "user77@e-health.bg",
+          "Attributes": {
             "PHARMACY_NS_CITY": [
               "Sofia"
             ],
@@ -261,33 +269,32 @@ x-envoy-upstream-service-time: 8
               "+359 222222"
             ]
           },
-          "disableableCredentialTypes": [],
-          "requiredActions": [],
-          "realmRoles": [
+          "DisableableCredentialTypes": [],
+          "RequiredActions": [],
+          "RealmRoles": [
             "pharmacist"
           ],
-          "clientRoles": {
+          "ClientRoles": {
             "erx-resource-server": [
               "pharmastar_user"
             ]
           },
-          "notBefore": 0,
-          "access": {
+          "NotBefore": 0,
+          "Access": {
             "manageGroupMembership": true,
             "view": true,
             "mapRoles": true,
             "impersonate": true,
             "manage": true
-          },
-          "auth": {}
+          }
         }
       ]
-    }
+    },
+    "Auth": {}
   },
-  "success": true,
-  "errors": []
+  "Success": true,
+  "Errors": []
 }
-
 ```
 
 #### Вход в системата за краен потребител
@@ -295,7 +302,7 @@ x-envoy-upstream-service-time: 8
 Входа в системата става чрез: 
 ```
 Request method: POST
-Request URI:    https://stagingerx.e-health.bg/erx-ui/api/entry
+Request URI:    https://stagingerx.e-health.bg/fhir/erx-phs/api/entry
 Proxy:                  <none>
 Request params: <none>
 Query params:   <none>
@@ -309,23 +316,22 @@ Multiparts:             <none>
 Body:
 
 {
-    "user": {
-        "data": [
+    "User": {
+        "Data": [
             {
-                "username": "test2",
-                "credentials": [
+                "Username": "test77",
+                "Credentials": [
                     {
-                        "type": "password",
-                        "value": "<specified password>"
+                        "Type": "password",
+                        "Value": "<omitted>"
                     }
                 ]
             }
         ],
-        "action": "LOGIN"
+        "Action": "LOGIN"
     }
 }
 ```
-
 При изпълнението на тази заявка ще получите отговор 200 ОК, като в резултата ще получите JSON с токен нужен за изпълнението 
 на последващите заявки към микроуслугата за работа с рецепта на PharmaStar:
 ```
@@ -339,13 +345,13 @@ access-control-allow-origin: *
 x-envoy-upstream-service-time: 8
 
 {
-  "result": {
-    "user": {
-      "token": "<token content>"
+  "Result": {
+    "User": {
+      "Token": "<token content>"
     }
   },
-  "success": true,
-  "errors": []
+  "Success": true,
+  "Errors" []
 }
 ```
 
@@ -354,12 +360,12 @@ x-envoy-upstream-service-time: 8
 За да валидирате текущо издадения токен можете да използвате следната заявка:
 
 ```
-curl --location --request POST 'https://stagingerx.e-health.bg/erx-ui/api/auth-entry' \
+curl --location --request POST 'https://stagingerx.e-health.bg/fhir/erx-phs/api/auth-entry' \
 --header 'Authorization: Bearer <access token>' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "auth": {
-        "whoAmI": true
+    "Auth": {
+        "WhoAmI": true
     }
 }'
 ```
@@ -376,48 +382,51 @@ access-control-allow-origin: *
 x-envoy-upstream-service-time: 8
 
 {
-  "result": {
-    "auth": {
-      "whoAmI": {
-        "id": "9cdf4017-13df-45db-a1e9-79985a9b341d",
-        "createdTimestamp": 1586968251423,
-        "username": "test2",
-        "enabled": true,
-        "totp": false,
-        "emailVerified": false,
-        "firstName": "User",
-        "lastName": "Test",
-        "email": "test2@gbg.bg",
-        "attributes": {
+  "Result": {
+    "Auth": {
+      "WhoAmI": {
+        "Id": "51ad3444-137d-48bb-b332-ac189b0f60d6",
+        "CreatedTimestamp": 1591863107192,
+        "Username": "test77",
+        "Enabled": true,
+        "Totp": false,
+        "EmailVerified": false,
+        "FirstName": "John",
+        "LastName": "Doe",
+        "Email": "user77@e-health.bg",
+        "Attributes": {
           "PHARMACY_NS_CITY": [
             "Sofia"
           ],
           "PHARMACY_NS_VAT_NUMBER": [
-            "324234234"
+            "123456789"
           ],
           "PHARMACY_NS_DISTRICT": [
             "Sofia"
           ],
+          "PHARMACY_NS_PHARMACIST_FIRST_NAME": [
+            "John"
+          ],
+          "PHARMACY_NS_PHARMACIST_FAMILY_NAME": [
+            "Doe"
+          ],
           "PHARMACY_NS_PHARMACY_NAME": [
-            "PHARMACY1"
+            "TEST PHARMACY"
           ],
           "PHARMACY_NS_PHARMACY_NO": [
-            "NO11111111"
+            "NO12345678"
           ],
           "PHARMACY_NS_ADDRESS": [
-            "Address 1"
-          ],
-          "PHARMACY_NS_STATE": [
-            "Sofia"
+            "Test street 9"
           ],
           "PHARMACY_NS_PHONE": [
-            "08888888"
+            "+359 222222"
           ]
         },
-        "disableableCredentialTypes": [],
-        "requiredActions": [],
-        "notBefore": 0,
-        "access": {
+        "DisableableCredentialTypes": [],
+        "RequiredActions": [],
+        "NotBefore": 0,
+        "Access": {
           "manageGroupMembership": true,
           "view": true,
           "mapRoles": true,
@@ -427,8 +436,8 @@ x-envoy-upstream-service-time: 8
       }
     }
   },
-  "success": true,
-  "errors": []
+  "Success": true,
+  "Errors": []
 }
 ```
 
@@ -447,12 +456,12 @@ access-control-allow-origin: *
 x-envoy-upstream-service-time: 8
 
 {
-  "result": null,
-  "success": false,
-  "errors": [
+  "Result": null,
+  "Success": false,
+  "Errors" [
     {
-      "message": "Грешно потребителко име или парола",
-      "key": "{user.login.failed}"
+      "Message" "Грешно потребителко име или парола",
+      "Key" "{user.login.failed}"
     }
   ]
 }
@@ -472,35 +481,35 @@ access-control-allow-origin: *
 x-envoy-upstream-service-time: 8
 
 {
-  "result": null,
-  "success": false,
-  "errors": [
+  "Result": null,
+  "Success": false,
+  "Errors" [
     {
-      "path": "user",
-      "message": "Некоректен обект за регистрация",
-      "key": "Registration request structure is wrong"
+      "Path": "user",
+      "Message" "Некоректен обект за регистрация",
+      "Key" "Registration request structure is wrong"
     },
     {
-      "path": "user.pharmacyRegRq.pharmacistFirstName",
-      "message": "Името на фармацевта е задължително",
-      "key": "{jakarta.validation.constraints.NotBlank.message}"
+      "Path": "user.pharmacyRegRq.pharmacistFirstName",
+      "Message" "Името на фармацевта е задължително",
+      "Key" "{jakarta.validation.constraints.NotBlank.message}"
     },
     {
-      "path": "user.pharmacyRegRq.pharmacyNo",
-      "message": "Номерът на аптека е задължителен",
-      "key": "{jakarta.validation.constraints.NotBlank.message}"
+      "Path": "user.pharmacyRegRq.pharmacyNo",
+      "Message" "Номерът на аптека е задължителен",
+      "Key" "{jakarta.validation.constraints.NotBlank.message}"
     },
     {
-      "path": "user.pharmacyRegRq.pharmacistFamilyName",
-      "message": "Фамилията на фармацевта е задължителна",
-      "key": "{jakarta.validation.constraints.NotBlank.message}"
+      "Path": "user.pharmacyRegRq.pharmacistFamilyName",
+      "Message" "Фамилията на фармацевта е задължителна",
+      "Key" "{jakarta.validation.constraints.NotBlank.message}"
     }
   ]
 }
 
 ```
 
-Грешка 404 получава се само в случаите че URL-то към услугите е грешно. В тялото на заявката при този случай се получава HTML съдържанние
+Грешка 404 получава се само в случаите че URL-то към услугите е грешно.
 Грешка 500 се получава в случаите на срив в системата,
 
 ### Описание на процеса на вземане на данни
@@ -512,7 +521,8 @@ x-envoy-upstream-service-time: 8
 #### Вземане на рецепта по идентифиактор
 
 ```
-curl --location --request GET 'https://stagingerx.e-health.bg/fhir/erx-phs/api/prescription?identifier=ERXN20200423000002%D0%90' \
+curl --location 
+--request GET 'https://stagingerx.e-health.bg/fhir/erx-phs/api/prescription?identifier=ERXN20200423000002%D0%90' \
 --header 'Content-Type: application/json' \
 --header 'Accept-Language: bg-BG' \
 --header 'Authorization: Bearer <token>'
@@ -525,7 +535,7 @@ curl --location --request GET 'https://stagingerx.e-health.bg/fhir/erx-phs/api/p
 
 ```
 {
-  "result": [
+  "Result": [
     {
       "Patient": {
         "FirstName": "ГЕОРГИ",
@@ -603,13 +613,13 @@ curl --location --request GET 'https://stagingerx.e-health.bg/fhir/erx-phs/api/p
       "Part": "PartA"
     }
   ],
-  "success": true,
-  "errors": [
+  "Success": true,
+  "Errors" [
   ]
 }
 ```
 
-При настъпване на грешка, резултата ще бъде 200 ОК, но в структурата ще присъства обект с атрибут "errors":
+При настъпване на грешка, резултата ще бъде 200 ОК, но в структурата ще присъства обект с атрибут "Errors"
 
 ```
 Request method: GET
@@ -636,13 +646,13 @@ access-control-allow-origin: *
 x-envoy-upstream-service-time: 8
 
 {
-    "result": null,
-    "success": false,
-    "errors": [
+    "Result": null,
+    "Success": false,
+    "Errors" [
         {
-            "path": null,
-            "message": "Атрибута identifier е задължителен",
-            "key": "{missing.queryAttribute.identifier}"
+            "Path": null,
+            "Message" "Атрибута identifier е задължителен",
+            "Key" "{missing.queryAttribute.identifier}"
         }
     ]
 }
@@ -662,13 +672,13 @@ access-control-allow-origin: *
 x-envoy-upstream-service-time: 8
 
 {
-  "result": [],
-  "success": false,
-  "errors": [
+  "Result": [],
+  "Success": false,
+  "Errors" [
           {
-              "path": null,
-              "message": "Липсва рецепта по зададените критерии",
-              "key": "{missing.prescription}"
+              "Path": null,
+              "Message" "Липсва рецепта по зададените критерии",
+              "Key" "{missing.prescription}"
           }
       ]
 }
@@ -787,7 +797,7 @@ access-control-allow-origin: *
 x-envoy-upstream-service-time: 8
 
 {
-  "result": {
+  "Result": {
     "State": null,
     "Id": null,
     "PrescriptionNo": "ERXN20200423000001А",
@@ -862,8 +872,8 @@ x-envoy-upstream-service-time: 8
     "Pharmacist": null,
     "Pharmacy": null
   },
-  "success": true,
-  "errors": []
+  "Success": true,
+  "Errors" []
 }
 ```
 
@@ -880,13 +890,13 @@ access-control-allow-origin: *
 x-envoy-upstream-service-time: 8
 
 {
-  "result": [],
-  "success": false,
-  "errors": [
+  "Result": [],
+  "Success": false,
+  "Errors" [
           {
-              "path": null,
-              "message": "Липсва рецепта по зададените критерии",
-              "key": "{missing.prescription}"
+              "Path": null,
+              "Message" "Липсва рецепта по зададените критерии",
+              "Key" "{missing.prescription}"
           }
       ]
 }
