@@ -446,7 +446,7 @@ x-envoy-upstream-service-time: 8
 
 ```
 curl --location 
---request GET 'https://erx2.e-health.bg/phs?identifier=ERXN20200423000002%D0%90' \
+--request GET 'https://erx2.e-health.bg/phs/prescription?identifier=ERXN20200423000002%D0%90' \
 --header 'Content-Type: application/json' \
 --header 'Accept-Language: bg-BG' \
 --header 'Authorization: Bearer <token>'
