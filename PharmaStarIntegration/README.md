@@ -225,69 +225,29 @@ x-envoy-upstream-service-time: 8
 
 {
   "Result": {
-    "User": {
-      "Result": [
-        {
-          "Id": "51ad3444-137d-48bb-b332-ac189b0f60d6",
-          "CreatedTimestamp": 1591863107192,
-          "Username": "test77",
-          "Enabled": true,
-          "Totp": false,
-          "EmailVerified": false,
-          "FirstName": "John",
-          "LastName": "Doe",
-          "Email": "user77@e-health.bg",
-          "Attributes": {
-            "PHARMACY_NS_CITY": [
-              "Sofia"
-            ],
-            "PHARMACY_NS_VAT_NUMBER": [
-              "123456789"
-            ],
-            "PHARMACY_NS_DISTRICT": [
-              "Sofia"
-            ],
-            "PHARMACY_NS_PHARMACIST_FIRST_NAME": [
-              "John"
-            ],
-            "PHARMACY_NS_PHARMACIST_FAMILY_NAME": [
-              "Doe"
-            ],
-            "PHARMACY_NS_PHARMACY_NAME": [
-              "TEST PHARMACY"
-            ],
-            "PHARMACY_NS_PHARMACY_NO": [
-              "NO12345678"
-            ],
-            "PHARMACY_NS_ADDRESS": [
-              "Test street 9"
-            ],
-            "PHARMACY_NS_PHONE": [
-              "+359 222222"
-            ]
-          },
-          "DisableableCredentialTypes": [],
-          "RequiredActions": [],
-          "RealmRoles": [
-            "pharmacist"
-          ],
-          "ClientRoles": {
-            "erx-resource-server": [
-              "pharmastar_user"
-            ]
-          },
-          "NotBefore": 0,
-          "Access": {
-            "manageGroupMembership": true,
-            "view": true,
-            "mapRoles": true,
-            "impersonate": true,
-            "manage": true
-          }
-        }
-      ]
-    },
-    "Auth": {}
+    "Id": 88,
+    "FirstName": "John",
+    "LastName": "Doe",
+    "Enabled": true,
+    "Username": "test77",
+    "Email": "user77@e-health.bg",
+    "EmailVerified": false,
+    "Acknowledged": false,
+    "Authorities": [
+      {
+        "Id": 89,
+        "Authority": "ROLE_PHARMACIST",
+        "Client": "1"
+      }
+    ],
+    "Properties": [
+      {
+        "Id": 90,
+        "Key": "roleId",
+        "Value": "PractitionerRole/18/_history/1"
+      }
+    ],
+    "Provider": "local"
   },
   "Success": true,
   "Errors": []
@@ -869,6 +829,7 @@ x-envoy-upstream-service-time: 8
 
 * (16/06/2020)
     * Логин: Промяна на URL. Актуално: https://erx2.e-health.bg/auth/login. При всяка логин заявка се добавя Authentication: Basic <> header.
+    * Pharmastar Admin login. Промяна на потребителското име от pharmacist001 на pharmastar
     * Регистрация: Промяна на URL. Актуално: https://erx2.e-health.bg/auth/register. Резултатната структура е различно от предходната. 
     * Whoami: Промяна на URL. Актуално: https://erx2.e-health.bg/user/me Промяна на типа заявка. Преди беше POST сега е GET.
     * Pharmastar Service: Промяна на URL. Актуално: https://erx2.e-health.bg/phs/prescription
