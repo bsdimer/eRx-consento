@@ -281,7 +281,7 @@ x-envoy-upstream-service-time: 8
 Входа в системата става чрез: 
 ```
 Request method: POST
-Request URI:    https://stagingerx.e-health.bg/fhir/erx-phs/api/entry
+Request URI:    https://erx2.e-health.bg/auth/login
 Proxy:                  <none>
 Request params: <none>
 Query params:   <none>
