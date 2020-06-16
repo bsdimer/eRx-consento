@@ -705,7 +705,7 @@ Body:
 }
 ```
 Като валидациите за обекта са:
-* PrescriptionNo @NotBlank (??? Barcode или PrescriptionNo е полето по което се търси рецептата ???) 
+* Barcode @NotBlank
 * size(PrescriptionRows) > 0
 * PrescriptionRows[*][DispensionQuantity] > 0
 
