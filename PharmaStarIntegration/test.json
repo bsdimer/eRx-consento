@@ -1,0 +1,79 @@
+{
+  "result": {
+    "State": null,
+    "Id": null,
+    "PrescriptionNo": "ERXN20200423000001А",
+    "Barcode": "ERXN20200423000001А",
+    "ProtocolNo": null,
+    "PrescriptionDate": "2020-01-01T00:00:00",
+    "VeteranBookledNo": null,
+    "Part": "PartNone",
+    "Patient": {
+      "FirstName": "ГЕОРГИ",
+      "MiddleName": "ТОДОРОВ",
+      "LastName": "ДИМИТРОВ",
+      "Age": 43,
+      "Egn": "<omitted>",
+      "Lnch": "<omitted>",
+      "Ssn": null,
+      "PersId": null,
+      "Address": null,
+      "CertificateCountryCode": null,
+      "CertificateIssueDate": null,
+      "CertificateValidFrom": null,
+      "CertificateValidTo": null,
+      "CertificateNumber": null,
+      "CertificateType": null,
+      "BirthDate": "2020-01-01T00:00:00",
+      "Sex": "male",
+      "MaternityFlag": false,
+      "PregnancyFlag": false
+    },
+    "Doctor": {
+      "SoftwareCode": null,
+      "RhifCode": null,
+      "PracticeNo": "<omitted>",
+      "Uin": "<omitted>",
+      "Specialty": "00",
+      "Name": "д-р John The Doctor",
+      "Phone": "088888880"
+    },
+    "VeteranBookledDate": null,
+    "ProtocolDate": null,
+    "PrescriptionBookletNo": 1080005,
+    "AmbSheetNo": 12580,
+    "PrescriptionRows": [
+      {
+        "Line": 0,
+        "NhifCode": "RF034",
+        "IcdCode": "J30.1",
+        "Description": "ZYRTEC FILM COATED TABLETS 10MG 10",
+        "IsGeneric": false,
+        "PrescribedQuantity": 2,
+        "DispensionQuantity": 1,
+        "NumberOfDays": 7,
+        "Price": null
+      },
+      {
+        "Line": 1,
+        "NhifCode": "SF083",
+        "IcdCode": "H16.0",
+        "Description": "FLAREX EYE DROPS 0.1% 5ML 1",
+        "IsGeneric": true,
+        "PrescribedQuantity": 1,
+        "DispensionQuantity": 2,
+        "NumberOfDays": 10,
+        "Price": null
+      }
+    ],
+    "TerritorialExpertMedicalCommissionBookledNo": null,
+    "TerritorialExpertMedicalCommissionBookledDate": null,
+    "IsDeleted": null,
+    "DispensingDate": "2020-06-02T00:00:00+03:00",
+    "WayOfPayment": null,
+    "Pharmacist": null,
+    "Pharmacy": null
+  },
+  "success": true,
+  "errors": []
+}
