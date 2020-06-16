@@ -622,6 +622,7 @@ Form params:	<none>
 Path params:	<none>
 Headers:		Cache-Control=no-cache
                 Accept-Language: bg-BG
+                Authorization: Bearer <token>
 				Accept=*/*
 				Content-Type=application/json; charset=UTF-8
 Cookies:		<none>
