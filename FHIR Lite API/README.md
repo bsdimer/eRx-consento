@@ -471,7 +471,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
             "coding": [
               {
                 "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
-                "code": "nhif"
+                "code": "nhif-5a"
               }
             ]
           }
@@ -552,7 +552,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
             "coding": [
               {
                 "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
-                "code": "nhif"
+                "code": "nhif-5a"
               }
             ]
           }
@@ -735,8 +735,53 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
 * Organization - Репрезентация на организацията издаваща рецептата. Създава се по време на регистрация на потребителски акаунт и се добавя като референция при издаване на рецептата.
 * Location - Репрезентация на локацията на конкретната организация издаваща рецептата. Създава се автоматично по време на регистрация на потребителски акаунт и се добавя като референция при издаване на рецептата.
 
-ToDo: Конкретно описание на тялото на завката. 
+#### Формат на JSON заявката
 
+##### Категории рецепти
+Категорията на рецептат се специфицира в атрибута category.coding[0].code и може да притежава една от следните стойности:
+* white - бяла рецептурна бланка
+* green - зелена рецептурна бланка
+* yellow - жълта рецептурна бланка
+* nhif-5 - рецепта по НЗОК - бланка №5
+* nhif-5a - рецепта по НЗОК - бланка №5а
+* nhif-5b - рецепта по НЗОК - бланка №5б
+* nhif-5c - рецепта по НЗОК - бланка №5в
+
+Ако рецептата е с категории започваща с nhif кодът му трябва да бъде задължително от позитивния лекарствен списък по НЗОК.
+```
+...
+    "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://terminology.e-health.bg/CodeSystem/mc-nhif",
+              "code": "SF083",
+              "display": "FLAREX EYE DROPS 0.1% 5ML 1"
+            }
+          ]
+        }
+...
+``` 
+При бялата рецепта обаче в списка с лекарства може да присъстват и такива които са извън позитивния лекарствен списък на НЗОК. 
+В този случай кодировката на лекарството е по друга номенклатура специфициран чрез:
+
+```
+...
+    "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.sathealth.com/ml/1.0",
+              "code": "PT004470",
+              "display": "ZYRTEC FILM COATED TABLETS 10MG 10"
+            }
+          ]
+        }
+...
+``` 
+Въпросната номенклатура включва в себе си както лекарствата от позитивния лекарствен списък, така и тези които могат
+да бъдат изписвани без лекарско предписание, хранителни добавки и др. Достъпът на номенклатурата е публичерн и свободен.
+Повече информация за това можете да намерите тук: https://terminology.e-health.bg/ml
+
+#### Разчитане на резултата от изпълнение на заявката 
 Резултата от изпълнението на заяквата при успех е следният:
 ```
 {
@@ -840,7 +885,7 @@ ToDo: Конкретно описание на тялото на завката.
                                 "coding": [
                                     {
                                         "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
-                                        "code": "nhif"
+                                        "code": "nhif-5a"
                                     }
                                 ]
                             }
@@ -961,7 +1006,7 @@ ToDo: Конкретно описание на тялото на завката.
                                 "coding": [
                                     {
                                         "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
-                                        "code": "nhif"
+                                        "code": "nhif-5a"
                                     }
                                 ]
                             }
@@ -1376,3 +1421,5 @@ ToDo:
     * Генериране на офлайн баркод
 * (2020-07-15 19:43)
     * Описание на Staging среда
+* (2020-08-06 08:49)
+    * Промяна на категорията на рецептата от hhif на nhif-5a. Добавяне на списък с категории на рецептите.
