@@ -471,7 +471,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
             "coding": [
               {
                 "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
-                "code": "nhif-5a"
+                "code": "A"
               }
             ]
           }
@@ -552,7 +552,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
             "coding": [
               {
                 "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
-                "code": "nhif-5a"
+                "code": "A"
               }
             ]
           }
@@ -739,15 +739,15 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
 
 ##### Категории рецепти
 Категорията на рецептат се специфицира в атрибута category.coding[0].code и може да притежава една от следните стойности:
-* white - бяла рецептурна бланка
-* green - зелена рецептурна бланка
-* yellow - жълта рецептурна бланка
-* nhif-5 - рецепта по НЗОК - бланка №5
-* nhif-5a - рецепта по НЗОК - бланка №5а
-* nhif-5b - рецепта по НЗОК - бланка №5б
-* nhif-5c - рецепта по НЗОК - бланка №5в
+* W - бяла рецептурна бланка
+* G - зелена рецептурна бланка
+* Y - жълта рецептурна бланка
+* N - рецепта по НЗОК - бланка №5
+* A - рецепта по НЗОК - бланка №5а
+* B - рецепта по НЗОК - бланка №5б
+* C - рецепта по НЗОК - бланка №5в
 
-Ако рецептата е с категории започваща с nhif кодът му трябва да бъде задължително от позитивния лекарствен списък по НЗОК.
+Ако рецептата е с категории започваща с А, B, C или N, то кодът на лекарството, трябва да бъде задължително от позитивния лекарствен списък по НЗОК.
 ```
 ...
     "medicationCodeableConcept": {
@@ -779,7 +779,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
 ``` 
 Въпросната номенклатура включва в себе си както лекарствата от позитивния лекарствен списък, така и тези които могат
 да бъдат изписвани без лекарско предписание, хранителни добавки и др. Достъпът на номенклатурата е публичерн и свободен.
-Повече информация за това можете да намерите тук: https://terminology.e-health.bg/ml
+Повече информация за това можете да намерите тук: https://pharmacy.e-health.bg/ml
 
 #### Разчитане на резултата от изпълнение на заявката 
 Резултата от изпълнението на заяквата при успех е следният:
@@ -885,7 +885,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
                                 "coding": [
                                     {
                                         "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
-                                        "code": "nhif-5a"
+                                        "code": "A"
                                     }
                                 ]
                             }
@@ -1006,7 +1006,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
                                 "coding": [
                                     {
                                         "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
-                                        "code": "nhif-5a"
+                                        "code": "A"
                                     }
                                 ]
                             }
@@ -1422,4 +1422,9 @@ ToDo:
 * (2020-07-15 19:43)
     * Описание на Staging среда
 * (2020-08-06 08:49)
-    * Промяна на категорията на рецептата от hhif на nhif-5a. Добавяне на списък с категории на рецептите.
+    * Промяна на категорията на рецептата от 'hhif' на 'nhif-5a'. Добавяне на списък с категории на рецептите.
+* (2020-08-20 13:34)
+    * Промяна на категорията на рецептата от 'hhif' на 'A'. Промяна в номенклатурата за категории рецепти.
+    Категорията вече се отбелязва с един от следните символи - W, G, Y, N, A, B, C. 
+    Отбелязването с един симовл е по-подходящо поради причината, че тази символика на отбелязване, съответства на символът използван
+    при генерирането на баркода.  

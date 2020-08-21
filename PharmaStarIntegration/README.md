@@ -484,6 +484,7 @@ curl --location
       },
       "ProtocolDate": null,
       "PrescriptionBookletNo": 1080005,
+      "PrescriptionType": "A",
       "AmbSheetNo": 12580,
       "Doctor": {
         "SoftwareCode": null,
@@ -632,6 +633,7 @@ Body:
     "State": null,
     "Id": null,
     "PrescriptionNo": "ERXN20200423000001А",
+    "PrescriptionType": "A",
     "Barcode": "ERXN20200423000001А",
     "ProtocolNo": null,
     "PrescriptionDate": "2020-01-01T00:00:00",
@@ -725,6 +727,7 @@ x-envoy-upstream-service-time: 8
     "State": null,
     "Id": null,
     "PrescriptionNo": "ERXN20200423000001А",
+    "PrescriptionType": "A",
     "Barcode": "ERXN20200423000001А",
     "ProtocolNo": null,
     "PrescriptionDate": "2020-01-01T00:00:00",
@@ -855,11 +858,34 @@ https://erx2.e-health.bg/print/barcode/code128?code=ERX1592920883N00360A&scale=3
 * 46 - уникален идентификатор на потребителския профил който е създал рецептата в регистъра. Размера на това поле е произовлен и варира в зависимост от общата брока потребителски профили. 
 * А - използва се само при рецепти по НЗОК бланка 5А. Отговаря на отрязъка който е част от рецептата. При рецептите издадени в една бланка този символ липсва.
 
-#### Последни примени (Changelog)
+#### Appendix #3 Категории рецепти
+Категорията на рецептат се специфицира в атрибута `PrescriptionType` и може да притежава една от следните стойности:
+* W - бяла рецептурна бланка
+* G - зелена рецептурна бланка
+* Y - жълта рецептурна бланка
+* N - рецепта по НЗОК - бланка №5
+* A - рецепта по НЗОК - бланка №5а
+* B - рецепта по НЗОК - бланка №5б
+* C - рецепта по НЗОК - бланка №5в
 
+Ако рецептата е с категории започваща с А, B, C или N, то кодът на лекарството, трябва да бъде задължително от позитивния лекарствен списък по НЗОК.
+
+### Staging среда
+* Staging #2
+    * host: stg2.e-health.bg
+    * port: TCP/21003
+    * protocol: HTTPS
+    * credentials: същите както на продукционната среда
+    * текуща API версия: 0.0.2-SNAPSHOT
+
+### Последни примени (Changelog)
 * (16/06/2020)
     * Логин: Промяна на URL. Актуално: https://erx2.e-health.bg/auth/login. При всяка логин заявка се добавя Authentication: Basic <> header.
     * Pharmastar Admin login. Промяна на потребителското име от pharmacist001 на pharmastar
     * Регистрация: Промяна на URL. Актуално: https://erx2.e-health.bg/auth/register. Резултатната структура е различно от предходната. 
     * Whoami: Промяна на URL. Актуално: https://erx2.e-health.bg/user/me Промяна на типа заявка. Преди беше POST сега е GET.
     * Pharmastar Service: Промяна на URL. Актуално: https://erx2.e-health.bg/phs/prescription
+
+* (20/08/2020)
+    * Добяване на атрибут `PrescriptionType` указващ категорията на рецептата. Повече информация за това можете да намерите в "Appendix #3 Категории рецепти"
+    * Добавяне на информация за staging среда.
