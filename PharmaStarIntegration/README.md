@@ -929,7 +929,7 @@ https://erx2.e-health.bg/print/barcode/code128?code=ERX1592920883N00360A&scale=3
     * credentials: същите както на продукционната среда
     * текуща API версия: 0.0.2-SNAPSHOT
 
-### Последни примени (Changelog)
+### Последни промени (Changelog)
 * (16/06/2020)
     * Логин: Промяна на URL. Актуално: https://erx2.e-health.bg/auth/login. При всяка логин заявка се добавя Authentication: Basic <> header.
     * Pharmastar Admin login. Промяна на потребителското име от pharmacist001 на pharmastar
