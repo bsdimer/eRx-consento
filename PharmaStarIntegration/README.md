@@ -990,9 +990,8 @@ https://erx2.e-health.bg/print/barcode/code128?code=ERX1592920883N00360A&scale=3
           }
 ```
 
-### Swagger
-   * address: https://<host>/swagger-ui/index.html
-   
+_Повече информация за ресурса Dosage можете да намерите тук: https://www.hl7.org/fhir/dosage.html_
+
 ### Staging среда
 * Staging #2
     * host: stg2.e-health.bg
@@ -1001,6 +1000,7 @@ https://erx2.e-health.bg/print/barcode/code128?code=ERX1592920883N00360A&scale=3
     * credentials: същите както на продукционната среда
     * текуща API версия: 0.0.2-SNAPSHOT
     * URL с прокси https://stgerx2.e-health.bg/
+    * Swagger: http://stgerx2.e-health.bg:21003/swagger-ui/index.html
 
 ### Последни промени (Changelog)
 * (16/06/2020)
@@ -1019,4 +1019,4 @@ https://erx2.e-health.bg/print/barcode/code128?code=ERX1592920883N00360A&scale=3
 
 * (31/08/2020)
     * Appendix #5 - Описание на дозировката
-    * Добавяне на Swagger
+    * Добавяне на Swagger в описанието на стейджинг средата
