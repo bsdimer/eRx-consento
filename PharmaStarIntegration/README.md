@@ -996,7 +996,7 @@ _Повече информация за ресурса Dosage можете да 
 * Staging #2
     * host: stg2.e-health.bg
     * port: TCP/21003
-    * protocol: HTTPS
+    * protocol: HTTP
     * credentials: същите както на продукционната среда
     * текуща API версия: 0.0.2-SNAPSHOT
     * URL с прокси https://stgerx2.e-health.bg/
