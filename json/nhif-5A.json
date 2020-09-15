@@ -1,0 +1,191 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "extension": [
+          {
+            "url": "http://terminology.e-health.bg/Extension/bgnhif-booklet-part",
+            "valueString": "A0"
+          }
+        ],
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/internal",
+            "value": "1205607551"
+          },
+          {
+            "system": "http://erx.e-health.bg/ns/booklet-id",
+            "value": "1520002"
+          }
+        ],
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
+                "code": "nhif"
+              }
+            ]
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://terminology.e-health.bg/CodeSystem/mc-nhif",
+              "code": "RF127",
+              "display": "Foster"
+            }
+          ]
+        },
+        "authoredOn": "2020-09-01T00:00:00.000Z",
+        "reasonCode": [
+          {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/sid/icd-10",
+                "code": "J44.8"
+              }
+            ]
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "text": "SIG",
+            "doseAndRate": [
+              {
+                "doseQuantity": {
+                  "value": 3,
+                  "unit": "units"
+                },
+                "rateQuantity": {
+                  "value": 2,
+                  "unit": "daily"
+                }
+              }
+            ]
+          }
+        ],
+        "dispenseRequest": {
+          "dispenseInterval": {
+            "value": 7,
+            "unit": "days"
+          },
+          "quantity": {
+            "value": 1,
+            "unit": "pack"
+          },
+          "expectedSupplyDuration": {
+            "value": 11,
+            "unit": "days"
+          }
+        },
+        "substitution": {
+          "allowedBoolean": false
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Practitioner",
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/uin",
+            "value": "2300013314"
+          }
+        ],
+        "name": [
+          {
+            "use": "official",
+            "family": "Поляков",
+            "given": [
+              "Иван",
+              "Акимов"
+            ],
+            "prefix": [
+              "д-р"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "088888880",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "ipolyakov@e-health.bg",
+            "use": "work"
+          }
+        ],
+        "gender": "male"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "PractitionerRole",
+        "specialty": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.e-health.bg/CodeSystem/doctor-speciality-nhif",
+                "code": "00",
+                "display": "Общопрактикуващ лекар"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "extension": [
+          {
+            "url": "http://terminology.e-health.bg.com/Extension/patient-maternity-flag",
+            "valueBoolean": false
+          },
+          {
+            "url": "http://terminology.e-health.bg.com/Extension/patient-pregnancy-flag",
+            "valueBoolean": false
+          }
+        ],
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/nnbgr",
+            "value": "7605213087"
+          }
+        ],
+        "birthDate": "1976-05-21T00:00:00.000Z",
+        "gender": "male",
+        "name": [
+          {
+            "family": "ТРАЕВ",
+            "given": [
+              "КОНСТАНТИН",
+              "ТРАЙЧЕВ"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/enc-id",
+            "value": "006655"
+          }
+        ],
+        "period": {
+          "start": "2020-09-01T00:00:00.000Z",
+          "end": "2020-09-01T00:10:00.000Z"
+        }
+      }
+    }
+  ]
+}
