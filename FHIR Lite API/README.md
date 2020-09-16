@@ -1302,7 +1302,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
                 }
             ]
         },
-        "T3": "https://erx2.e-health.bg/print/barcode/code128?code=ERX1592920883N00360A&scale=3"
+        "T3": "ERXE-20200916-145-3002-A"
     },
     "Success": true,
     "Errors": []
@@ -1312,7 +1312,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
 При успешна заяква в резултата присъстват три характеристики (Т1, Т2 и Т3). 
 * Т1 е резултата от записа 
 * Т2 е реалната FHIR заявка изпълнена към сървъра. Олекотената FHIR заявка се трансформира и записва във FHIR сървъра.
-* Т3 е еидентификатор на записаната рецепта. Може да се използва в последствие за генриране на баркод на рецептата.  
+* Т3 е масив от баркодове на записаната рецепта.  
 
 Структурата на Т1 атрибура носи в себе си информация за изпълнената операция върху конкретния ресурс:
 ```
@@ -1373,7 +1373,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
 Примерна заявка за генериране на баркод по идентификатор на рецептата.
 https://erx2.e-health.bg/print/barcode/code128?code=ERX1592920883N00360A&scale=3
 
-<img src="https://erx2.e-health.bg/print/barcode/code128?code=ERX1592920883N00360A&scale=3"/>
+<img src="https://erx2.e-health.bg/print/barcode/code128?code=ERX1592920883N00360A&scale=3"></img>
 
 ##### Формат на баркод на рецепта.
 Идентификаторът на рецептата е сложна структура от тип символен низ. 
@@ -1412,10 +1412,10 @@ _потребителския идентификатор е статична с�
 вътрешния идентификатор на MedicationRequest ресурса да съвпада с предходния.
 
 ##### Генериране на баркод
-При изпълнението на заявката за запис на рецепта може да бъде подаден и т.нар. seed който е стрингове поле без интервали.
-Примерна заявка представлява POST https://stgerx2.e-health.bg/fhirlite/prescription?seed=abcd123
+При изпълнението на заявката за запис на рецепта трябва да бъде подаден и т.нар. seed, който е стрингове поле без интервали определящо идентификатора на рецептата в системата на издателя и.
+Примерна заявка представлява POST https://stgerx2.e-health.bg/fhirlite/prescription?seed=1100102
 
-Примерен баркод генериран по този подход е: ERXE-20200627-60-abcd123
+Примерен баркод генериран по този подход е: ERXE-20200627-60-1100102
 
 Полето seed трябва да бъде уникално за всяка издадена рецепта, това е опция която се съблюдава от издателя на рецептата. 
 
@@ -1423,32 +1423,705 @@ _потребителския идентификатор е статична с�
 вътрешни алгоритми съблюдаващи уникалността на всяка заявка. Имайте в предвид че всяка промяна на вече изписана рецепта генерира нов уникален баркод
 в полето Т3. Баркода генериран по метода използващ seed е статичен и уникалността му зависи от уникалността на полето seed.
 Баркода генериран чрез seed се записва в MedicationRequest.identifier и може да бъде открит в отговора на заявката.  
+Структура на баркода генериран по този принцип:
 
-Системата притежава и REST услуга генерираща уникални баркод номера по гореописания принцип. 
-Примерна GET заявка от вида:
-
-```https://erx2.e-health.bg/helper/generate-date-unique-barcode?code=123123```
-
-с подадени автентикационни параметри ще генерира баркод според описаната семантика. Резултата ще бъде следния код: ERXI-20200629-88-123123.
-Възможно е да се създават и уникални кодове за секунда или с включен UnixTimestamp. Техните URL са съответно:
-
-```https://erx2.e-health.bg/helper/generate-seconds-unique-barcode?code=123123```
-
-и
-
-```https://erx2.e-health.bg/helper/generate-timestamp-unique-barcode?code=123123```
+ * "ERXE"
+ * текущата дата във формат yyyyMMdd
+ * полето sub на автентикационния токен, което преставлява Result.Id. Тази стойност е постоянна и се генерира по време на регистрация. Може да се вземе и от резултата на заявката за регистрация, която изглежда по следния начин:{
+  "Result" : {
+    "Id" : 145,
+    "Enabled" : true,
+    "Username" : "mediksoft_23",
+    "EmailVerified" : false, .... в случая това ид е 145
+ * Идентификатора на рецептата който се намира в базата на издателя. Ако рецептата записана в таблица на базата има идентификатор = 1000 то това е id-то което се изпраща в seed. 
+ * Примерен баркод: ERXE-20200627-148-1000.
  
+При генерирането на баркод за рецепта по НЗОК бланка 5А(Тройна рецепта) се издава отделен баркод за всеки отрязък нарецептата, тъй като
+при изписването на лекарствата в аптечния софтуер се съблюдава конкретния отрязък. По тази причина към баркода
+автоматично се добавя и съответния индекс на отрязъка - A, B или C разделен с тире. Това касае само принтирането на рецептата от страна на издателя, т.е. не променя формата на заявката.
+Издателя трябва да принтира отделен баркод на всеки отрязък който има следния формат:
+
+ERXE-20200627-148-1000-А - за отрязък А, ERXE-20200627-148-1000-Б за отрязък B и ERXE-20200627-148-1000-C за отрязък C.
+
+Системата притежава и REST услуга генерираща уникални баркод номера, която може да бъде ползвана по желание на клиента. 
+Примерна GET заявка от вида:
+ 
+#### Услуга за принтиране на рецепти
+ToDo:
+
+#### Регистриране за нотификация при промяна на рецепта
+ToDo:
+
+#### Пример за пълен процес по регистрация, вход и издаване на рецепти
+##### Вход с административен потребител съответстващ на издателя на медицинския софтуер.
+```
+curl --location --request POST 'https://stgerx2.e-health.bg/auth/login' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic Base64(<clientUsername>:<clientPassword>)' \
+--data-raw '{
+    "User": {
+        "Data": [
+            {
+                "Username": "medic",
+                "Credentials": [
+                    {
+                        "Type": "password",
+                        "Value": "<the password>"
+                    }
+                ]
+            }
+        ]
+    }
+}'
+```
+Атрибутите, чрез които се генерира Basic автентикацията се издават от администратора на регистъра и са различни от тези за вход (User.Data.Username). Те определят клиенсткото приложение.
+Атрибутите за потребителско име и парола В Json body се създават от администратора на регистъра и определят съответния административен акаунт който използва въпросния клиетски софтуер. 
+Може да има повече от един администраторски акаунт който използва едни и същи Basic-Auth атрибути.
+ 
+Очакван резултат:
+```
+{
+    "Result": {
+        "User": {
+            "Token": "<Bearer token>"
+        }
+    },
+    "Success": true,
+    "Errors": []
+}
+```
+ 
+##### Регистрация на практика.
+Регистрация на практика с данните за нея, като се използва <Bearer Token> получен от предходната заявка;
+
+```
+curl --location --request POST 'https://stgerx2.e-health.bg/auth/register' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOjU3LCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInJvbGVzIjpbeyJyb2xlIjoiUk9MRV9BRE1JTiIsImNsaWVudCI6Im1lZGljIn1dLCJpc3MiOiJodHRwczovL2VsbWVkaWtvLmNvbSIsImdpdmVuX25hbWUiOiJBZG1pbmlzdHJhdG9yIiwiY2xpZW50X2lkIjoibWVkaWMiLCJwaWN0dXJlIjpudWxsLCJzY29wZSI6IiovKi4qIiwicGhvbmVfbnVtYmVyIjpudWxsLCJleHAiOjE1OTk3MDExMDksImZhbWlseV9uYW1lIjoiTWVkaWMiLCJlbWFpbCI6ImFkbWluQG1lZGljYmcuY29tIiwidXNlcm5hbWUiOiJtZWRpYyJ9.J5Ic2VDtFw3MvuE-gyR6eUzTzaVkGgWgrt-Sf6O3I8h4QYO3CGz-pxdwpUx6xWYCvgpE_fEyV32Fv-3WS8Z-YQ' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "Auth": {
+        "Data": [
+            {
+                "Username": "medic_practice1",
+                "Credentials": [
+                    {
+                        "Type": "password",
+                        "Value": "<password string>"
+                    }
+                ]
+            }
+        ],
+        "MedicRegRq": {
+            "OrganizationName": "Test Clinic",
+            "DhId": "1234567898",
+            "NhifBranch": "03"
+        }
+    }
+}'
+```
+Полетата в MedicRegReq съответстват на 
+    ** "OrganizationName": име на организацията
+    ** "DhId": номер на лечебно заведение
+    ** "NhifBranch": номер на здравен рейон
+
+Очакван резултат:
+```
+{
+    "Result": {
+        "Id": 118,
+        "Enabled": true,
+        "Username": "medic_practice1",
+        "EmailVerified": false,
+        "Acknowledged": false,
+        "Authorities": [
+            {
+                "Id": 119,
+                "Authority": "ROLE_MEDIC",
+                "Client": "56"
+            }
+        ],
+        "Properties": [
+            {
+                "Id": 120,
+                "Key": "roleId",
+                "Value": "PractitionerRole/3205/_history/1"
+            }
+        ],
+        "Provider": "local"
+    },
+    "Success": true,
+    "Errors": []
+}
+
+```
+Запазете полето "Id" във вътрешна база данни, защото то е необходимо в последствие при генерирането на баркод на рецептата. 
+
+##### Вход с креденции на практиката.
+
+```
+curl --location --request POST 'https://stgerx2.e-health.bg/auth/login' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic Base64(<clientUsername>:<clientPassword>)' \
+--data-raw '{
+    "User": {
+        "Data": [
+            {
+                "Username": "medic_practice1",
+                "Credentials": [
+                    {
+                        "Type": "password",
+                        "Value": "<password string>"
+                    }
+                ]
+            }
+        ]
+    }
+}'
+```
+
+##### Издаване на рецепта по НЗОК, бланка 5.
+```
+curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?seed=3002' \
+--header 'Authorization: Bearer <token>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "extension": [
+          {
+            "url": "http://terminology.e-health.bg/Extension/bgnhif-booklet-part",
+            "valueString": "A0"
+          }
+        ],
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/booklet-id",
+            "value": "1520002"
+          }
+        ],
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
+                "code": "A"
+              }
+            ]
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://terminology.e-health.bg/CodeSystem/mc-nhif",
+              "code": "RF127",
+              "display": "Foster"
+            }
+          ]
+        },
+        "authoredOn": "2020-09-01T00:00:00.000Z",
+        "reasonCode": [
+          {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/sid/icd-10",
+                "code": "J44.8"
+              }
+            ]
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "text": "SIG",
+            "doseAndRate": [
+              {
+                "doseQuantity": {
+                  "value": 3,
+                  "unit": "units"
+                },
+                "rateQuantity": {
+                  "value": 2,
+                  "unit": "daily"
+                }
+              }
+            ]
+          }
+        ],
+        "dispenseRequest": {
+          "dispenseInterval": {
+            "value": 30,
+            "unit": "days"
+          },
+          "quantity": {
+            "value": 1,
+            "unit": "pack"
+          }
+        },
+        "substitution": {
+          "allowedBoolean": false
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Practitioner",
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/uin",
+            "value": "2300013314"
+          }
+        ],
+        "name": [
+          {
+            "use": "official",
+            "family": "Поляков",
+            "given": [
+              "Иван",
+              "Акимов"
+            ],
+            "prefix": [
+              "д-р"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "088888880",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "ipolyakov@e-health.bg",
+            "use": "work"
+          }
+        ],
+        "gender": "male"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "PractitionerRole",
+        "specialty": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.e-health.bg/CodeSystem/doctor-speciality-nhif",
+                "code": "00",
+                "display": "Общопрактикуващ лекар"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "extension": [
+          {
+            "url": "http://terminology.e-health.bg.com/Extension/patient-maternity-flag",
+            "valueBoolean": false
+          },
+          {
+            "url": "http://terminology.e-health.bg.com/Extension/patient-pregnancy-flag",
+            "valueBoolean": false
+          }
+        ],
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/nnbgr",
+            "value": "<EGN>"
+          }
+        ],
+        "birthDate": "1000-05-27T00:00:00.000Z",
+        "gender": "male",
+        "name": [
+          {
+            "family": "ПЕТКОВ",
+            "given": [
+              "СЕВДАЛИН",
+              "ПЕТКОВ"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/enc-id",
+            "value": "006655"
+          }
+        ],
+        "period": {
+          "start": "2020-09-01T00:00:00.000Z",
+          "end": "2020-09-01T00:10:00.000Z"
+        }
+      }
+    }
+  ]
+}
+```
+##### Издаване на рецепта по НЗОК, бланка 5А.
+```
+curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?seed=3002' \
+--header 'Authorization: Bearer <token>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "extension": [
+          {
+            "url": "http://terminology.e-health.bg/Extension/bgnhif-booklet-part",
+            "valueString": "A0"
+          }
+        ],
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/booklet-id",
+            "value": "1520002"
+          }
+        ],
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
+                "code": "A"
+              }
+            ]
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://terminology.e-health.bg/CodeSystem/mc-nhif",
+              "code": "RF127",
+              "display": "Foster"
+            }
+          ]
+        },
+        "authoredOn": "2020-09-01T00:00:00.000Z",
+        "reasonCode": [
+          {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/sid/icd-10",
+                "code": "J44.8"
+              }
+            ]
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "text": "SIG",
+            "doseAndRate": [
+              {
+                "doseQuantity": {
+                  "value": 3,
+                  "unit": "units"
+                },
+                "rateQuantity": {
+                  "value": 2,
+                  "unit": "daily"
+                }
+              }
+            ]
+          }
+        ],
+        "dispenseRequest": {
+          "dispenseInterval": {
+            "value": 30,
+            "unit": "days"
+          },
+          "quantity": {
+            "value": 1,
+            "unit": "pack"
+          }
+        },
+        "substitution": {
+          "allowedBoolean": false
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "extension": [
+          {
+            "url": "http://terminology.e-health.bg/Extension/bgnhif-booklet-part",
+            "valueString": "B0"
+          }
+        ],
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/booklet-id",
+            "value": "1520002"
+          }
+        ],
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
+                "code": "A"
+              }
+            ]
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://terminology.e-health.bg/CodeSystem/mc-nhif",
+              "code": "RF127",
+              "display": "Foster"
+            }
+          ]
+        },
+        "authoredOn": "2020-09-01T00:00:00.000Z",
+        "reasonCode": [
+          {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/sid/icd-10",
+                "code": "J44.8"
+              }
+            ]
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "text": "SIG",
+            "doseAndRate": [
+              {
+                "doseQuantity": {
+                  "value": 3,
+                  "unit": "units"
+                },
+                "rateQuantity": {
+                  "value": 2,
+                  "unit": "daily"
+                }
+              }
+            ]
+          }
+        ],
+        "dispenseRequest": {
+          "dispenseInterval": {
+            "value": 30,
+            "unit": "days"
+          },
+          "quantity": {
+            "value": 2,
+            "unit": "pack"
+          }
+        },
+        "substitution": {
+          "allowedBoolean": false
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "extension": [
+          {
+            "url": "http://terminology.e-health.bg/Extension/bgnhif-booklet-part",
+            "valueString": "C0"
+          }
+        ],
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/booklet-id",
+            "value": "1520002"
+          }
+        ],
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
+                "code": "A"
+              }
+            ]
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://terminology.e-health.bg/CodeSystem/mc-nhif",
+              "code": "RF127",
+              "display": "Foster"
+            }
+          ]
+        },
+        "authoredOn": "2020-09-01T00:00:00.000Z",
+        "reasonCode": [
+          {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/sid/icd-10",
+                "code": "J44.8"
+              }
+            ]
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "text": "SIG",
+            "doseAndRate": [
+              {
+                "doseQuantity": {
+                  "value": 3,
+                  "unit": "units"
+                },
+                "rateQuantity": {
+                  "value": 2,
+                  "unit": "daily"
+                }
+              }
+            ]
+          }
+        ],
+        "dispenseRequest": {
+          "dispenseInterval": {
+            "value": 30,
+            "unit": "days"
+          },
+          "quantity": {
+            "value": 2,
+            "unit": "pack"
+          }
+        },
+        "substitution": {
+          "allowedBoolean": false
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Practitioner",
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/uin",
+            "value": "2300013314"
+          }
+        ],
+        "name": [
+          {
+            "use": "official",
+            "family": "Поляков",
+            "given": [
+              "Иван",
+              "Акимов"
+            ],
+            "prefix": [
+              "д-р"
+            ]
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "088888880",
+            "use": "mobile"
+          },
+          {
+            "system": "email",
+            "value": "ipolyakov@e-health.bg",
+            "use": "work"
+          }
+        ],
+        "gender": "male"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "PractitionerRole",
+        "specialty": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.e-health.bg/CodeSystem/doctor-speciality-nhif",
+                "code": "00",
+                "display": "Общопрактикуващ лекар"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "extension": [
+          {
+            "url": "http://terminology.e-health.bg.com/Extension/patient-maternity-flag",
+            "valueBoolean": false
+          },
+          {
+            "url": "http://terminology.e-health.bg.com/Extension/patient-pregnancy-flag",
+            "valueBoolean": false
+          }
+        ],
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/nnbgr",
+            "value": "<EGN>"
+          }
+        ],
+        "birthDate": "1000-05-27T00:00:00.000Z",
+        "gender": "male",
+        "name": [
+          {
+            "family": "ПЕТКОВ",
+            "given": [
+              "СЕВДАЛИН",
+              "ПЕТКОВ"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/enc-id",
+            "value": "006655"
+          }
+        ],
+        "period": {
+          "start": "2020-09-01T00:00:00.000Z",
+          "end": "2020-09-01T00:10:00.000Z"
+        }
+      }
+    }
+  ]
+}
+```
+##### Издаване на бяла (обикновенна) рецепта.
+ToDo:
+#### Получаване на информация за изписани рецепти и лекарства от аптеките работещи в регистъра
+ToDo:
+
 #### Описание на staging среда
 ##### Staging #1
  * host: stgerx2.e-health.bg
  * protocol: HTTPS
  * credentials: съвпадат с тези на продукционната среда
  
-#### Услуга за принтиране на рецепти
-ToDo:
-
-#### Регистриране за нотификация при промяна на рецепта
-
 #### Changelog
 * (2020-06-27 08:54)
     * Генериране на офлайн баркод
@@ -1464,3 +2137,7 @@ ToDo:
 * (2020-08-23 07:38)
     * Добавяне на функционалност за кодиране на лекарство по две кодови системи (NHIF, SatHealth)
     * Промяна на подхода за генериране на offline barcode 
+* (2020-09-16 14:11)
+    * Пример за пълен процес по регистрация, вход и издаване на рецепти
+    * Получаване на информация за изписани рецепти и лекарства от аптеките работещи с регистъра
+    * Примяна на формата за генериране на Баркод. В момента остава само вариант за Offline генериране чрез опоменатия алгоритъм.
