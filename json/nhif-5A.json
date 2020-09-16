@@ -13,10 +13,6 @@
         ],
         "identifier": [
           {
-            "system": "http://erx.e-health.bg/ns/internal",
-            "value": "1205607551"
-          },
-          {
             "system": "http://erx.e-health.bg/ns/booklet-id",
             "value": "1520002"
           }
@@ -26,7 +22,7 @@
             "coding": [
               {
                 "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
-                "code": "nhif"
+                "code": "A"
               }
             ]
           }
@@ -70,16 +66,166 @@
         ],
         "dispenseRequest": {
           "dispenseInterval": {
-            "value": 7,
+            "value": 30,
             "unit": "days"
           },
           "quantity": {
             "value": 1,
             "unit": "pack"
-          },
-          "expectedSupplyDuration": {
-            "value": 11,
+          }
+        },
+        "substitution": {
+          "allowedBoolean": false
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "extension": [
+          {
+            "url": "http://terminology.e-health.bg/Extension/bgnhif-booklet-part",
+            "valueString": "B0"
+          }
+        ],
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/booklet-id",
+            "value": "1520002"
+          }
+        ],
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
+                "code": "A"
+              }
+            ]
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://terminology.e-health.bg/CodeSystem/mc-nhif",
+              "code": "RF127",
+              "display": "Foster"
+            }
+          ]
+        },
+        "authoredOn": "2020-09-01T00:00:00.000Z",
+        "reasonCode": [
+          {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/sid/icd-10",
+                "code": "J44.8"
+              }
+            ]
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "text": "SIG",
+            "doseAndRate": [
+              {
+                "doseQuantity": {
+                  "value": 3,
+                  "unit": "units"
+                },
+                "rateQuantity": {
+                  "value": 2,
+                  "unit": "daily"
+                }
+              }
+            ]
+          }
+        ],
+        "dispenseRequest": {
+          "dispenseInterval": {
+            "value": 30,
             "unit": "days"
+          },
+          "quantity": {
+            "value": 2,
+            "unit": "pack"
+          }
+        },
+        "substitution": {
+          "allowedBoolean": false
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "extension": [
+          {
+            "url": "http://terminology.e-health.bg/Extension/bgnhif-booklet-part",
+            "valueString": "C0"
+          }
+        ],
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/booklet-id",
+            "value": "1520002"
+          }
+        ],
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
+                "code": "A"
+              }
+            ]
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://terminology.e-health.bg/CodeSystem/mc-nhif",
+              "code": "RF127",
+              "display": "Foster"
+            }
+          ]
+        },
+        "authoredOn": "2020-09-01T00:00:00.000Z",
+        "reasonCode": [
+          {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/sid/icd-10",
+                "code": "J44.8"
+              }
+            ]
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "text": "SIG",
+            "doseAndRate": [
+              {
+                "doseQuantity": {
+                  "value": 3,
+                  "unit": "units"
+                },
+                "rateQuantity": {
+                  "value": 2,
+                  "unit": "daily"
+                }
+              }
+            ]
+          }
+        ],
+        "dispenseRequest": {
+          "dispenseInterval": {
+            "value": 30,
+            "unit": "days"
+          },
+          "quantity": {
+            "value": 2,
+            "unit": "pack"
           }
         },
         "substitution": {
