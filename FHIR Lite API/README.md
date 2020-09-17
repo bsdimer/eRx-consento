@@ -178,32 +178,19 @@ Body:
                         "Type": "password",
                         "Value": "<omitted>"
                     }
-                ],
-                "ClientRoles": {
-                    "erx-resource-server": [
-                        "niset_user"
-                    ]
-                }
+                ]
             }
         ],
         "Action": "CREATE",
         "MedicRegRq": {
             "DhId": "2201928818",
-            "OrganizationName": "ДКЦ ТЕСТ"
+            "OrganizationName": "ДКЦ ТЕСТ",
+            "NhifBranch": "02"
         }
     }
 }
 ```
-**Обърнете внимание на това че `erx-resource-server` е с малка буква**
-```
-...
-"ClientRoles": {
-   "erx-resource-server": [
-        "niset_user"
-    ]
-}
-...
-```
+
 Резултата от тази заявка ще бъде винаги `200 OK` като в отговора ще се съдържа информация за направената регистрация: 
 Пример за успешна регистрация:
 ```
@@ -301,15 +288,14 @@ Body:
                     }
                 ]
             }
-        ],
-        "Action": "LOGIN"
+        ]
     }
 }
 ```
 *Отново при изпълнениет на тази заявка се изисква добавяне на Basic автентикация, аналогично на предходната при вземане на токен за администратор*
 
 При изпълнението заявката ще получите отговор 200 ОК, като в резултата ще получите JSON с токен нужен за изпълнението 
-на последващите заявки към микроуслугите обслужващи осноните бизнес функции на регистъра:
+на последващите заявки към микроуслугите обслужващи основните бизнес функции на регистъра:
 ```
 HTTP/1.1 200 OK
 Server: nginx/1.17.9
@@ -444,8 +430,8 @@ x-envoy-upstream-service-time: 8
 на системата. Примерна заявка за рецепта представлява:
 
 ```
-curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' \
---header 'Authorization: Bearer <token>' \
+curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?seed=3014' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOjEyNCwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJyb2xlcyI6W3sicm9sZSI6IlJPTEVfTUVESUMiLCJjbGllbnQiOiJtZWRpYyJ9XSwiaXNzIjoiaHR0cHM6Ly9lbG1lZGlrby5jb20iLCJnaXZlbl9uYW1lIjpudWxsLCJjbGllbnRfaWQiOiJtZWRpYyIsInBpY3R1cmUiOm51bGwsInNjb3BlIjoiKi8qLioiLCJwaG9uZV9udW1iZXIiOm51bGwsImV4cCI6MTYwMDM3MjM4MCwiZmFtaWx5X25hbWUiOm51bGwsImVtYWlsIjpudWxsLCJ1c2VybmFtZSI6Im1lZGljNSJ9.2mIruwdqt24M0HytcJKaqUTMOlz1N5DKg2uS9VuQIoBuzEWM2LOI6-O0uqG7kGcaU1CivCxezz7zHe-4luvLKQ' \
 --header 'Content-Type: application/json' \
 --data-raw '{
   "resourceType": "Bundle",
@@ -462,8 +448,8 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
         ],
         "identifier": [
           {
-            "system": "http://erx.e-health.bg/ns/internal",
-            "value": "1000007543"
+            "system": "http://erx.e-health.bg/ns/booklet-id",
+            "value": "1520002"
           }
         ],
         "category": [
@@ -480,25 +466,25 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
           "coding": [
             {
               "system": "http://terminology.e-health.bg/CodeSystem/mc-nhif",
-              "code": "RF034",
-              "display": "ZYRTEC FILM COATED TABLETS 10MG 10"
+              "code": "RF127",
+              "display": "Foster"
             }
           ]
         },
-        "authoredOn": "2020-01-01T00:00:00.000Z",
+        "authoredOn": "2020-09-01T00:00:00.000Z",
         "reasonCode": [
           {
             "coding": [
               {
                 "system": "http://hl7.org/fhir/sid/icd-10",
-                "code": "J30.1"
+                "code": "J44.8"
               }
             ]
           }
         ],
         "dosageInstruction": [
           {
-            "text": "сутрин на гладно",
+            "text": "SIG",
             "doseAndRate": [
               {
                 "doseQuantity": {
@@ -515,16 +501,12 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
         ],
         "dispenseRequest": {
           "dispenseInterval": {
-            "value": 7,
+            "value": 30,
             "unit": "days"
           },
           "quantity": {
-            "value": 2,
+            "value": 1,
             "unit": "pack"
-          },
-          "expectedSupplyDuration": {
-            "value": 11,
-            "unit": "days"
           }
         },
         "substitution": {
@@ -538,13 +520,13 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
         "extension": [
           {
             "url": "http://terminology.e-health.bg/Extension/bgnhif-booklet-part",
-            "valueString": "A1"
+            "valueString": "B0"
           }
         ],
         "identifier": [
           {
-            "system": "http://erx.e-health.bg/ns/internal",
-            "value": "1000007544"
+            "system": "http://erx.e-health.bg/ns/booklet-id",
+            "value": "1520002"
           }
         ],
         "category": [
@@ -561,33 +543,33 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
           "coding": [
             {
               "system": "http://terminology.e-health.bg/CodeSystem/mc-nhif",
-              "code": "SF083",
-              "display": "FLAREX EYE DROPS 0.1% 5ML 1"
+              "code": "RF127",
+              "display": "Foster"
             }
           ]
         },
-        "authoredOn": "2020-01-01T00:00:00.000Z",
+        "authoredOn": "2020-09-01T00:00:00.000Z",
         "reasonCode": [
           {
             "coding": [
               {
                 "system": "http://hl7.org/fhir/sid/icd-10",
-                "code": "H16.0"
+                "code": "J44.8"
               }
             ]
           }
         ],
         "dosageInstruction": [
           {
-            "text": "вечер преди лягане",
+            "text": "SIG",
             "doseAndRate": [
               {
                 "doseQuantity": {
-                  "value": 2,
+                  "value": 3,
                   "unit": "units"
                 },
                 "rateQuantity": {
-                  "value": 1,
+                  "value": 2,
                   "unit": "daily"
                 }
               }
@@ -596,20 +578,93 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
         ],
         "dispenseRequest": {
           "dispenseInterval": {
-            "value": 10,
+            "value": 30,
             "unit": "days"
           },
           "quantity": {
-            "value": 1,
+            "value": 2,
             "unit": "pack"
-          },
-          "expectedSupplyDuration": {
-            "value": 5,
-            "unit": "days"
           }
         },
         "substitution": {
-          "allowedBoolean": true
+          "allowedBoolean": false
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "extension": [
+          {
+            "url": "http://terminology.e-health.bg/Extension/bgnhif-booklet-part",
+            "valueString": "C0"
+          }
+        ],
+        "identifier": [
+          {
+            "system": "http://erx.e-health.bg/ns/booklet-id",
+            "value": "1520002"
+          }
+        ],
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
+                "code": "A"
+              }
+            ]
+          }
+        ],
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://terminology.e-health.bg/CodeSystem/mc-nhif",
+              "code": "RF127",
+              "display": "Foster"
+            }
+          ]
+        },
+        "authoredOn": "2020-09-01T00:00:00.000Z",
+        "reasonCode": [
+          {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/sid/icd-10",
+                "code": "J44.8"
+              }
+            ]
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "text": "SIG",
+            "doseAndRate": [
+              {
+                "doseQuantity": {
+                  "value": 3,
+                  "unit": "units"
+                },
+                "rateQuantity": {
+                  "value": 2,
+                  "unit": "daily"
+                }
+              }
+            ]
+          }
+        ],
+        "dispenseRequest": {
+          "dispenseInterval": {
+            "value": 30,
+            "unit": "days"
+          },
+          "quantity": {
+            "value": 2,
+            "unit": "pack"
+          }
+        },
+        "substitution": {
+          "allowedBoolean": false
         }
       }
     },
@@ -682,17 +737,17 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
         "identifier": [
           {
             "system": "http://erx.e-health.bg/ns/nnbgr",
-            "value": "7703022402"
+            "value": "<omitted>"
           }
         ],
-        "birthDate": "1977-03-02T00:00:00.000Z",
+        "birthDate": "1972-03-12T00:00:00.000Z",
         "gender": "male",
         "name": [
           {
-            "family": "ДИМИТРОВ",
+            "family": "ТРАЕВ",
             "given": [
-              "ГЕОРГИ",
-              "ТОДОРОВ"
+              "КОНСТАНТИН",
+              "ТРАЙЧЕВ"
             ]
           }
         ]
@@ -704,17 +759,18 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
         "identifier": [
           {
             "system": "http://erx.e-health.bg/ns/enc-id",
-            "value": "016024"
+            "value": "006665"
           }
         ],
         "period": {
-          "start": "2020-03-01T00:00:00.000Z",
-          "end": "2020-03-01T00:10:00.000Z"
+          "start": "2020-09-01T00:00:00.000Z",
+          "end": "2020-09-01T00:10:00.000Z"
         }
       }
     }
   ]
-}'
+}
+'
 ```
 Тялото на заявката е JSON представляващ FHIR структурата Bundle (https://www.hl7.org/fhir/bundle.html).
 Това е специфична единица която обединява в себе си множество FHIR ресурси и има за цел изълнение на няколко заявки
@@ -793,7 +849,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
     "medicationCodeableConcept": {
           "coding": [
             {
-              "system": "http://www.sathealth.com/ml/1.0",
+              "system": "http://sathealth.com/cs/pt_code",
               "code": "PT004470",
               "display": "ZYRTEC FILM COATED TABLETS 10MG 10"
             }
@@ -809,62 +865,105 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
 Резултата от изпълнението на заяквата при успех е следният:
 ```
 {
-    "Result": {
-        "T1": {
-            "Id": "aecad7a6-1e36-41e7-a757-71a99ef47dd5",
-            "ResourceType": "Bundle",
-            "Type": "transaction-response",
-            "Entry": [
+    "result": {
+        "t1": {
+            "id": "5ce0a539-2361-4730-af5e-65346aed83b1",
+            "resource-type": "Bundle",
+            "type": "transaction-response",
+            "entry": [
                 {
-                    "Response": {
-                        "Status": "200 OK",
-                        "Location": "MedicationRequest/68/_history/2",
-                        "Etag": "2"
+                    "response": {
+                        "status": "200 OK",
+                        "location": "Patient/252/_history/1",
+                        "etag": "1"
                     }
                 },
                 {
-                    "Response": {
-                        "Status": "200 OK",
-                        "Location": "MedicationRequest/69/_history/2",
-                        "Etag": "2"
+                    "response": {
+                        "status": "201 Created",
+                        "location": "MedicationRequest/300/_history/1",
+                        "etag": "1"
                     }
                 },
                 {
-                    "Response": {
-                        "Status": "200 OK",
-                        "Location": "Practitioner/3/_history/1",
-                        "Etag": "1"
+                    "response": {
+                        "status": "201 Created",
+                        "location": "MedicationRequest/301/_history/1",
+                        "etag": "1"
                     }
                 },
                 {
-                    "Response": {
-                        "Status": "200 OK",
-                        "Location": "PractitionerRole/70/_history/1",
-                        "Etag": "1"
+                    "response": {
+                        "status": "201 Created",
+                        "location": "MedicationRequest/302/_history/1",
+                        "etag": "1"
                     }
                 },
                 {
-                    "Response": {
-                        "Status": "200 OK",
-                        "Location": "Encounter/71/_history/1",
-                        "Etag": "1"
+                    "response": {
+                        "status": "200 OK",
+                        "location": "Practitioner/3/_history/1",
+                        "etag": "1"
                     }
                 },
                 {
-                    "Response": {
-                        "Status": "200 OK",
-                        "Location": "Patient/9/_history/1",
-                        "Etag": "1"
+                    "response": {
+                        "status": "200 OK",
+                        "location": "PractitionerRole/292/_history/1",
+                        "etag": "1"
+                    }
+                },
+                {
+                    "response": {
+                        "status": "201 Created",
+                        "location": "Encounter/303/_history/1",
+                        "etag": "1"
                     }
                 }
             ]
         },
-        "T2": {
-            "ResourceType": "Bundle",
-            "Type": "transaction",
-            "Entry": [
+        "t2": {
+            "resource-type": "Bundle",
+            "type": "transaction",
+            "entry": [
                 {
-                    "Resource": {
+                    "resource": {
+                        "resourceType": "Patient",
+                        "extension": [
+                            {
+                                "url": "http://terminology.e-health.bg.com/Extension/patient-maternity-flag",
+                                "valueBoolean": false
+                            },
+                            {
+                                "url": "http://terminology.e-health.bg.com/Extension/patient-pregnancy-flag",
+                                "valueBoolean": false
+                            }
+                        ],
+                        "identifier": [
+                            {
+                                "system": "http://erx.e-health.bg/ns/nnbgr",
+                                "value": "<omitted>"
+                            }
+                        ],
+                        "name": [
+                            {
+                                "family": "ТРАЕВ",
+                                "given": [
+                                    "КОНСТАНТИН",
+                                    "ТРАЙЧЕВ"
+                                ]
+                            }
+                        ],
+                        "gender": "male",
+                        "birthDate": "1972-03-12T00:00:00.000Z"
+                    },
+                    "request": {
+                        "method": "POST",
+                        "url": "Patient"
+                    }
+                },
+                {
+                    "resource": {
                         "resourceType": "MedicationRequest",
                         "extension": [
                             {
@@ -874,32 +973,32 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
                         ],
                         "identifier": [
                             {
-                                "system": "http://erx.e-health.bg/ns/internal",
-                                "value": "1000007543"
+                                "system": "http://erx.e-health.bg/ns/booklet-id",
+                                "value": "1520002"
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/barcode-id",
-                                "value": "ERX1592920883N00360A"
-                            },
-                            {
-                                "system": "http://erx.e-health.bg/ns/prescription-id",
-                                "value": "159292088300360"
+                                "value": "ERXE-20200917-124-3014-A"
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/mr-id",
-                                "value": "ERX1592920883N00360A-0"
+                                "value": "ERXE-20200917-124-3014-A0"
+                            },
+                            {
+                                "system": "http://erx.e-health.bg/ns/internal",
+                                "value": "3014"
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/dh-id",
-                                "value": "1111111111"
+                                "value": "1234567897"
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/erx-users",
-                                "value": "niset2"
+                                "value": "medic5"
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/software-clients",
-                                "value": "niset"
+                                "value": "medic"
                             }
                         ],
                         "status": "active",
@@ -918,35 +1017,40 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
                             "coding": [
                                 {
                                     "system": "http://terminology.e-health.bg/CodeSystem/mc-nhif",
-                                    "code": "RF034",
-                                    "display": "ZYRTEC FILM COATED TABLETS 10MG 10"
+                                    "code": "RF127",
+                                    "display": "Foster"
                                 }
                             ]
                         },
-                        "encounter": {
-                            "reference": "urn:uuid:b997d629-f635-41cf-8e94-ddfe6e759f75"
+                        "subject": {
+                            "reference": "urn:uuid:139cc2c4-d4af-436c-91d7-68434ad215d7",
+                            "display": "КОНСТАНТИН ТРАЙЧЕВ ТРАЕВ"
                         },
-                        "authoredOn": "2020-01-01T00:00:00.000Z",
+                        "encounter": {
+                            "reference": "urn:uuid:07abb08c-bc31-466b-8042-bf4de71aa1b1"
+                        },
+                        "authoredOn": "2020-09-01T00:00:00.000Z",
                         "requester": {
-                            "reference": "urn:uuid:ada200f1-cf27-48a0-926b-1c7741fe161b"
+                            "reference": "urn:uuid:c7066a7c-064f-443d-8211-b763d8c47312",
+                            "display": "д-р Иван Акимов Поляков"
                         },
                         "reasonCode": [
                             {
                                 "coding": [
                                     {
                                         "system": "http://hl7.org/fhir/sid/icd-10",
-                                        "code": "J30.1"
+                                        "code": "J44.8"
                                     }
                                 ]
                             }
                         ],
                         "groupIdentifier": {
                             "system": "http://erx.e-health.bg/ns/barcode-id",
-                            "value": "ERX1592920883N00360A"
+                            "value": "ERXE-20200917-124-3014-A"
                         },
                         "dosageInstruction": [
                             {
-                                "text": "сутрин на гладно",
+                                "text": "SIG",
                                 "doseAndRate": [
                                     {
                                         "doseQuantity": {
@@ -963,64 +1067,60 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
                         ],
                         "dispenseRequest": {
                             "dispenseInterval": {
-                                "value": 7,
+                                "value": 30,
                                 "unit": "days"
                             },
                             "quantity": {
-                                "value": 2,
+                                "value": 1,
                                 "unit": "pack"
-                            },
-                            "expectedSupplyDuration": {
-                                "value": 11,
-                                "unit": "days"
                             }
                         },
                         "substitution": {
                             "allowedBoolean": false
                         }
                     },
-                    "Request": {
-                        "Method": "PUT",
-                        "Url": "MedicationRequest?identifier=http://erx.e-health.bg/ns/internal|1000007543"
+                    "request": {
+                        "method": "PUT",
+                        "url": "MedicationRequest?identifier=http://erx.e-health.bg/ns/mr-id|ERXE-20200917-124-3014-A0&identifier=http://erx.e-health.bg/ns/erx-users|medic5"
                     }
                 },
                 {
-                    "Resource": {
+                    "resource": {
                         "resourceType": "MedicationRequest",
                         "extension": [
                             {
                                 "url": "http://terminology.e-health.bg/Extension/bgnhif-booklet-part",
-                                "valueString": "A1"
+                                "valueString": "B0"
                             }
                         ],
                         "identifier": [
                             {
-                                "system": "http://erx.e-health.bg/ns/internal",
-                                "value": "1000007544"
+                                "system": "http://erx.e-health.bg/ns/booklet-id",
+                                "value": "1520002"
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/barcode-id",
-                                "value": "ERX1592920883N00360A"
-                            },
-                            {
-                                "system": "http://erx.e-health.bg/ns/prescription-id",
-                                "value": "159292088300360"
+                                "value": "ERXE-20200917-124-3014-B"
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/mr-id",
-                                "value": "ERX1592920883N00360A-1"
+                                "value": "ERXE-20200917-124-3014-B0"
+                            },
+                            {
+                                "system": "http://erx.e-health.bg/ns/internal",
+                                "value": "3014"
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/dh-id",
-                                "value": "1111111111"
+                                "value": "1234567897"
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/erx-users",
-                                "value": "niset2"
+                                "value": "medic5"
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/software-clients",
-                                "value": "niset"
+                                "value": "medic"
                             }
                         ],
                         "status": "active",
@@ -1039,43 +1139,48 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
                             "coding": [
                                 {
                                     "system": "http://terminology.e-health.bg/CodeSystem/mc-nhif",
-                                    "code": "SF083",
-                                    "display": "FLAREX EYE DROPS 0.1% 5ML 1"
+                                    "code": "RF127",
+                                    "display": "Foster"
                                 }
                             ]
                         },
-                        "encounter": {
-                            "reference": "urn:uuid:b997d629-f635-41cf-8e94-ddfe6e759f75"
+                        "subject": {
+                            "reference": "urn:uuid:139cc2c4-d4af-436c-91d7-68434ad215d7",
+                            "display": "КОНСТАНТИН ТРАЙЧЕВ ТРАЕВ"
                         },
-                        "authoredOn": "2020-01-01T00:00:00.000Z",
+                        "encounter": {
+                            "reference": "urn:uuid:07abb08c-bc31-466b-8042-bf4de71aa1b1"
+                        },
+                        "authoredOn": "2020-09-01T00:00:00.000Z",
                         "requester": {
-                            "reference": "urn:uuid:ada200f1-cf27-48a0-926b-1c7741fe161b"
+                            "reference": "urn:uuid:c7066a7c-064f-443d-8211-b763d8c47312",
+                            "display": "д-р Иван Акимов Поляков"
                         },
                         "reasonCode": [
                             {
                                 "coding": [
                                     {
                                         "system": "http://hl7.org/fhir/sid/icd-10",
-                                        "code": "H16.0"
+                                        "code": "J44.8"
                                     }
                                 ]
                             }
                         ],
                         "groupIdentifier": {
                             "system": "http://erx.e-health.bg/ns/barcode-id",
-                            "value": "ERX1592920883N00360A"
+                            "value": "ERXE-20200917-124-3014-B"
                         },
                         "dosageInstruction": [
                             {
-                                "text": "вечер преди лягане",
+                                "text": "SIG",
                                 "doseAndRate": [
                                     {
                                         "doseQuantity": {
-                                            "value": 2,
+                                            "value": 3,
                                             "unit": "units"
                                         },
                                         "rateQuantity": {
-                                            "value": 1,
+                                            "value": 2,
                                             "unit": "daily"
                                         }
                                     }
@@ -1084,29 +1189,147 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
                         ],
                         "dispenseRequest": {
                             "dispenseInterval": {
-                                "value": 10,
+                                "value": 30,
                                 "unit": "days"
                             },
                             "quantity": {
-                                "value": 1,
+                                "value": 2,
                                 "unit": "pack"
-                            },
-                            "expectedSupplyDuration": {
-                                "value": 5,
-                                "unit": "days"
                             }
                         },
                         "substitution": {
-                            "allowedBoolean": true
+                            "allowedBoolean": false
                         }
                     },
-                    "Request": {
-                        "Method": "PUT",
-                        "Url": "MedicationRequest?identifier=http://erx.e-health.bg/ns/internal|1000007544"
+                    "request": {
+                        "method": "PUT",
+                        "url": "MedicationRequest?identifier=http://erx.e-health.bg/ns/mr-id|ERXE-20200917-124-3014-B0&identifier=http://erx.e-health.bg/ns/erx-users|medic5"
                     }
                 },
                 {
-                    "Resource": {
+                    "resource": {
+                        "resourceType": "MedicationRequest",
+                        "extension": [
+                            {
+                                "url": "http://terminology.e-health.bg/Extension/bgnhif-booklet-part",
+                                "valueString": "C0"
+                            }
+                        ],
+                        "identifier": [
+                            {
+                                "system": "http://erx.e-health.bg/ns/booklet-id",
+                                "value": "1520002"
+                            },
+                            {
+                                "system": "http://erx.e-health.bg/ns/barcode-id",
+                                "value": "ERXE-20200917-124-3014-C"
+                            },
+                            {
+                                "system": "http://erx.e-health.bg/ns/mr-id",
+                                "value": "ERXE-20200917-124-3014-C0"
+                            },
+                            {
+                                "system": "http://erx.e-health.bg/ns/internal",
+                                "value": "3014"
+                            },
+                            {
+                                "system": "http://erx.e-health.bg/ns/dh-id",
+                                "value": "1234567897"
+                            },
+                            {
+                                "system": "http://erx.e-health.bg/ns/erx-users",
+                                "value": "medic5"
+                            },
+                            {
+                                "system": "http://erx.e-health.bg/ns/software-clients",
+                                "value": "medic"
+                            }
+                        ],
+                        "status": "active",
+                        "intent": "proposal",
+                        "category": [
+                            {
+                                "coding": [
+                                    {
+                                        "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
+                                        "code": "A"
+                                    }
+                                ]
+                            }
+                        ],
+                        "medicationCodeableConcept": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.e-health.bg/CodeSystem/mc-nhif",
+                                    "code": "RF127",
+                                    "display": "Foster"
+                                }
+                            ]
+                        },
+                        "subject": {
+                            "reference": "urn:uuid:139cc2c4-d4af-436c-91d7-68434ad215d7",
+                            "display": "КОНСТАНТИН ТРАЙЧЕВ ТРАЕВ"
+                        },
+                        "encounter": {
+                            "reference": "urn:uuid:07abb08c-bc31-466b-8042-bf4de71aa1b1"
+                        },
+                        "authoredOn": "2020-09-01T00:00:00.000Z",
+                        "requester": {
+                            "reference": "urn:uuid:c7066a7c-064f-443d-8211-b763d8c47312",
+                            "display": "д-р Иван Акимов Поляков"
+                        },
+                        "reasonCode": [
+                            {
+                                "coding": [
+                                    {
+                                        "system": "http://hl7.org/fhir/sid/icd-10",
+                                        "code": "J44.8"
+                                    }
+                                ]
+                            }
+                        ],
+                        "groupIdentifier": {
+                            "system": "http://erx.e-health.bg/ns/barcode-id",
+                            "value": "ERXE-20200917-124-3014-C"
+                        },
+                        "dosageInstruction": [
+                            {
+                                "text": "SIG",
+                                "doseAndRate": [
+                                    {
+                                        "doseQuantity": {
+                                            "value": 3,
+                                            "unit": "units"
+                                        },
+                                        "rateQuantity": {
+                                            "value": 2,
+                                            "unit": "daily"
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        "dispenseRequest": {
+                            "dispenseInterval": {
+                                "value": 30,
+                                "unit": "days"
+                            },
+                            "quantity": {
+                                "value": 2,
+                                "unit": "pack"
+                            }
+                        },
+                        "substitution": {
+                            "allowedBoolean": false
+                        }
+                    },
+                    "request": {
+                        "method": "PUT",
+                        "url": "MedicationRequest?identifier=http://erx.e-health.bg/ns/mr-id|ERXE-20200917-124-3014-C0&identifier=http://erx.e-health.bg/ns/erx-users|medic5"
+                    }
+                },
+                {
+                    "resource": {
                         "resourceType": "Practitioner",
                         "identifier": [
                             {
@@ -1115,15 +1338,15 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/dh-id",
-                                "value": "1111111111"
+                                "value": "1234567897"
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/erx-users",
-                                "value": "niset2"
+                                "value": "medic5"
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/software-clients",
-                                "value": "niset"
+                                "value": "medic"
                             }
                         ],
                         "name": [
@@ -1153,13 +1376,13 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
                         ],
                         "gender": "male"
                     },
-                    "Request": {
-                        "Method": "POST",
-                        "Url": "Practitioner"
+                    "request": {
+                        "method": "POST",
+                        "url": "Practitioner"
                     }
                 },
                 {
-                    "Resource": {
+                    "resource": {
                         "resourceType": "PractitionerRole",
                         "identifier": [
                             {
@@ -1168,22 +1391,23 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/dh-id",
-                                "value": "1111111111"
+                                "value": "1234567897"
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/erx-users",
-                                "value": "niset2"
+                                "value": "medic5"
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/software-clients",
-                                "value": "niset"
+                                "value": "medic"
                             }
                         ],
                         "practitioner": {
-                            "reference": "urn:uuid:076b82de-414f-4541-a44a-46d5d9f49f8a"
+                            "reference": "urn:uuid:752de6ea-79b6-43c3-bb21-88639f8992fd"
                         },
                         "organization": {
-                            "reference": "Organization/64"
+                            "reference": "Organization/285",
+                            "display": "Test Clinic"
                         },
                         "specialty": [
                             {
@@ -1198,7 +1422,8 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
                         ],
                         "location": [
                             {
-                                "reference": "Location/65"
+                                "reference": "Location/286",
+                                "display": "Test Clinic"
                             }
                         ],
                         "telecom": [
@@ -1214,105 +1439,74 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
                             }
                         ]
                     },
-                    "Request": {
-                        "Method": "PUT",
-                        "Url": "PractitionerRole?identifier=http://erx.e-health.bg/ns/uin|2300013314&identifier=http://erx.e-health.bg/ns/erx-users|niset2"
+                    "request": {
+                        "method": "PUT",
+                        "url": "PractitionerRole?identifier=http://erx.e-health.bg/ns/uin|2300013314&identifier=http://erx.e-health.bg/ns/erx-users|medic5"
                     }
                 },
                 {
-                    "Resource": {
+                    "resource": {
                         "resourceType": "Encounter",
                         "identifier": [
                             {
                                 "system": "http://erx.e-health.bg/ns/enc-id",
-                                "value": "016024"
+                                "value": "006665"
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/dh-id",
-                                "value": "1111111111"
+                                "value": "1234567897"
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/erx-users",
-                                "value": "niset2"
+                                "value": "medic5"
                             },
                             {
                                 "system": "http://erx.e-health.bg/ns/software-clients",
-                                "value": "niset"
+                                "value": "medic"
                             }
                         ],
                         "participant": [
                             {
                                 "individual": {
-                                    "reference": "urn:uuid:ada200f1-cf27-48a0-926b-1c7741fe161b"
+                                    "reference": "urn:uuid:c7066a7c-064f-443d-8211-b763d8c47312"
                                 }
                             }
                         ],
                         "period": {
-                            "start": "2020-03-01T00:00:00.000Z",
-                            "end": "2020-03-01T00:10:00.000Z"
+                            "start": "2020-09-01T00:00:00.000Z",
+                            "end": "2020-09-01T00:10:00.000Z"
                         },
                         "location": [
                             {
                                 "location": {
-                                    "reference": "Location/65"
+                                    "reference": "Location/286",
+                                    "display": "Test Clinic"
                                 }
                             }
                         ]
                     },
-                    "Request": {
-                        "Method": "PUT",
-                        "Url": "Encounter?identifier=http://erx.e-health.bg/ns/enc-id|016024&identifier=http://erx.e-health.bg/ns/erx-users|niset2&identifier=http://erx.e-health.bg/ns/software-clients|niset"
-                    }
-                },
-                {
-                    "Resource": {
-                        "resourceType": "Patient",
-                        "extension": [
-                            {
-                                "url": "http://terminology.e-health.bg.com/Extension/patient-maternity-flag",
-                                "valueBoolean": false
-                            },
-                            {
-                                "url": "http://terminology.e-health.bg.com/Extension/patient-pregnancy-flag",
-                                "valueBoolean": false
-                            }
-                        ],
-                        "identifier": [
-                            {
-                                "system": "http://erx.e-health.bg/ns/nnbgr",
-                                "value": "7703022402"
-                            }
-                        ],
-                        "name": [
-                            {
-                                "family": "ДИМИТРОВ",
-                                "given": [
-                                    "ГЕОРГИ",
-                                    "ТОДОРОВ"
-                                ]
-                            }
-                        ],
-                        "gender": "male",
-                        "birthDate": "1977-03-02T00:00:00.000Z"
-                    },
-                    "Request": {
-                        "Method": "POST",
-                        "Url": "Patient"
+                    "request": {
+                        "method": "PUT",
+                        "url": "Encounter?identifier=http://erx.e-health.bg/ns/enc-id|006665&identifier=http://erx.e-health.bg/ns/erx-users|medic5&identifier=http://erx.e-health.bg/ns/software-clients|medic"
                     }
                 }
             ]
         },
-        "T3": "ERXE-20200916-145-3002-A"
+        "t3": [
+            "ERXE-20200917-124-3014-A",
+            "ERXE-20200917-124-3014-B",
+            "ERXE-20200917-124-3014-C"
+        ]
     },
-    "Success": true,
-    "Errors": []
+    "success": true,
+    "errors": []
 }
 ```
 Отново структурата е обвита в т.нар ResultWrapper чийто флаг success носи информация за успеха на заяквата. 
 При успешна заяква в резултата присъстват три характеристики (Т1, Т2 и Т3). 
 * Т1 е резултата от записа 
 * Т2 е реалната FHIR заявка изпълнена към сървъра. Олекотената FHIR заявка се трансформира и записва във FHIR сървъра.
-* Т3 е масив от баркодове на записаната рецепта.  
+* Т3 е масив от баркодове на записаната рецепта. 
 
 Структурата на Т1 атрибура носи в себе си информация за изпълнената операция върху конкретния ресурс:
 ```
@@ -1354,62 +1548,15 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription' 
 
 ``` 
 
-*Важно: При създаването на рецептата в ресурса MedicationRequest трябва да присъства идентификатор със система http://erx.e-health.bg/ns/internal* 
-```
-...
-"identifier": [
-          {
-            "system": "http://erx.e-health.bg/ns/internal",
-            "value": "<identifier value>"
-          }
-        ],
-...
-```
-Това е вътршения уникален идентификатор за всяка рецепта, генерирана в софтуера на всеки клиент. 
-Той определя дали рецептата се променя или се създава нова. 
+*Важно: query параметъра seed определя уникалността на рецептата. Той е вътрешния идентификатор на рецептата в системата на издателя. Рецептата може да бъде променена 
+ако се изпълни същата заявка с новите данни и същия seed, но само в рамките на деня в който е изписана*
 
 #### Appendix #1 Услуга за генериране на баркод
 
 Примерна заявка за генериране на баркод по идентификатор на рецептата.
-https://erx2.e-health.bg/print/barcode/code128?code=ERX1592920883N00360A&scale=3
+https://erx2.e-health.bg/print/barcode/code128?code=ERXE-20200917-124-3015-A&scale=3
 
-<img src="https://erx2.e-health.bg/print/barcode/code128?code=ERX1592920883N00360A&scale=3"></img>
-
-##### Формат на баркод на рецепта.
-Идентификаторът на рецептата е сложна структура от тип символен низ. 
-Примерен идентификатр за рецепта по НЗОК е: *ERX1592863105N00246А*
-От ляво на дясно данните в идентификатора са следните:
-* ERX - три симовелен низ определящ регистъра
-* 1592863105 - десет символа определящо времето на издаване на рецетата в Unix timestamp. (Секундите от 1 Януари 1970 година до сега) 
-* N - един символ определящ типа на рецетата. Може да бъде W(за обикновенна "бяла" рецепта), G(заелена рецепта), Y(жълта рецепта), N(за рецепта по НЗОК).
-* 002 - трицифрено число - counter с допълващ символ '0'. Използва се за създаване на пореден уникален номер, тъй като е възможно издаването на две рецепти в една и съща секунда. Стойностите му са от 0 до 999 след което започва отново от 0.
-* 46 - уникален идентификатор на потребителския профил който е създал рецептата в регистъра. Размера на това поле е произовлен и варира в зависимост от общата брока потребителски профили. 
-* А - използва се само при рецепти по НЗОК бланка 5А. Отговаря на отрязъка който е част от рецептата. При рецептите издадени в една бланка този символ липсва.
-
-##### Промяна на данните на изписана рецепта
-В системата на медицинския софтуер се генрира идентификатор на рецепта. Този идентификатор се прилага на всеки един елемент на 
-от тип MedicationRequest в заявката към регистъра. Идентификаторите генерирани от медицинските софтуери се записват 
-със система "http://erx.e-health.bg/ns/internal". Примерен идентификатор на рецепта генериран от медицински софтуер:
-```
-...
-{
-    "system": "http://erx.e-health.bg/ns/internal",
-    "value": "1000007543"
-},
-...
-```
-2. Идентификатора който се генерира автоматично на базата на вътрешния идентификатор генериран от медицинския софтуер има формат:
-```ERXI-<yyyyMMdd>-<userId>-<internalId>```
-* ERXI е префикс с който фармацевтични софтуер разбира че рецептата е генерирана и записана в регистъра
-* yyyyMMdd е дата в описания формат, например 20200601 - 1 юни 2020г.
-* userId се екстрактва от автентикационния токен. JWT токена използван за авторизация носи в себе си информация за потребителя на който принадлежи. 
-Полето sub определя потребителския номер на клиента в контекста на регистъра. Екстракцията на това поле става чрез Base64Decode на втората част от токена който е разделен със символа "."  
-За повече информация прочетете тук: https://tools.ietf.org/html/rfc7519#section-4.1.2
-_потребителския идентификатор е статична стойност, която не се изменя. При поискване тази стойност може да бъде предоставена от разработчиците на регистъра_
-* internalId e идентификатора на рецепта генериран в системата на болничния софтуер
-
-Промяната на рецептата става чрез изпълнение на идентична заявка, като първоначалната, но с условиете 
-вътрешния идентификатор на MedicationRequest ресурса да съвпада с предходния.
+<img src="https://erx2.e-health.bg/print/barcode/code128?code=ERXE-20200917-124-3015-A&scale=3"></img>
 
 ##### Генериране на баркод
 При изпълнението на заявката за запис на рецепта трябва да бъде подаден и т.нар. seed, който е стрингове поле без интервали определящо идентификатора на рецептата в системата на издателя и.
