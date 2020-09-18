@@ -484,7 +484,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
         ],
         "dosageInstruction": [
           {
-            "text": "SIG",
+            "text": "<sig text>",
             "doseAndRate": [
               {
                 "doseQuantity": {
@@ -561,7 +561,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
         ],
         "dosageInstruction": [
           {
-            "text": "SIG",
+            "text": "<sig text>",
             "doseAndRate": [
               {
                 "doseQuantity": {
@@ -638,7 +638,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
         ],
         "dosageInstruction": [
           {
-            "text": "SIG",
+            "text": "<sig text>",
             "doseAndRate": [
               {
                 "doseQuantity": {
@@ -1050,7 +1050,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
                         },
                         "dosageInstruction": [
                             {
-                                "text": "SIG",
+                                "text": "<sig text>",
                                 "doseAndRate": [
                                     {
                                         "doseQuantity": {
@@ -1172,7 +1172,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
                         },
                         "dosageInstruction": [
                             {
-                                "text": "SIG",
+                                "text": "<sig text>",
                                 "doseAndRate": [
                                     {
                                         "doseQuantity": {
@@ -1294,7 +1294,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
                         },
                         "dosageInstruction": [
                             {
-                                "text": "SIG",
+                                "text": "<sig text>",
                                 "doseAndRate": [
                                     {
                                         "doseQuantity": {
@@ -1769,7 +1769,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
         ],
         "dosageInstruction": [
           {
-            "text": "SIG",
+            "text": "<sig text>",
             "doseAndRate": [
               {
                 "doseQuantity": {
@@ -1948,7 +1948,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
         ],
         "dosageInstruction": [
           {
-            "text": "SIG",
+            "text": "<sig text>",
             "doseAndRate": [
               {
                 "doseQuantity": {
@@ -2015,7 +2015,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
         ],
         "dosageInstruction": [
           {
-            "text": "SIG",
+            "text": "<sig text>",
             "doseAndRate": [
               {
                 "doseQuantity": {
@@ -2082,7 +2082,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
         ],
         "dosageInstruction": [
           {
-            "text": "SIG",
+            "text": "<sig text>",
             "doseAndRate": [
               {
                 "doseQuantity": {
@@ -2216,7 +2216,193 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
 }
 ```
 ##### Издаване на бяла (обикновенна) рецепта.
-ToDo:
+
+```
+curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?seed=3027&category=W' \
+--header 'Authorization: Bearer <access token>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "resourceType": "Bundle",
+    "type": "transaction",
+    "entry": [
+        {
+            "resource": {
+                "resourceType": "MedicationRequest",
+                "medicationCodeableConcept": {
+                    "coding": [
+                        {
+                            "system": "http://sathealth.com/cs/pt_code",
+                            "code": "PT000021",
+                            "display": "ASPIRIN C EFFERVESCENT TABLETS 10"
+                        }
+                    ]
+                },
+                "authoredOn": "2020-09-01T00:00:00.000Z",
+                "dispenseRequest": {
+                    "dispenseInterval": {
+                        "value": 30,
+                        "unit": "days"
+                    },
+                    "quantity": {
+                        "value": 2,
+                        "unit": "pack"
+                    }
+                },
+                "dosageInstruction": [
+                    {
+                        "text": "<sig text>",
+                        "doseAndRate": [
+                            {
+                                "doseQuantity": {
+                                    "value": 3,
+                                    "unit": "units"
+                                },
+                                "rateQuantity": {
+                                    "value": 2,
+                                    "unit": "daily"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "resource": {
+                "resourceType": "MedicationRequest",
+                "medicationCodeableConcept": {
+                    "coding": [
+                        {
+                            "system": "http://sathealth.com/cs/pt_code",
+                            "code": "PT000024",
+                            "display": "SAB SIMPLEX ORAL SUSPENSION 30ML 1"
+                        }
+                    ]
+                },
+                "authoredOn": "2020-09-01T00:00:00.000Z",
+                "dispenseRequest": {
+                    "dispenseInterval": {
+                        "value": 30,
+                        "unit": "days"
+                    },
+                    "quantity": {
+                        "value": 1,
+                        "unit": "pack"
+                    }
+                },
+                "dosageInstruction": [
+                    {
+                        "text": "<sig text>",
+                        "doseAndRate": [
+                            {
+                                "doseQuantity": {
+                                    "value": 3,
+                                    "unit": "units"
+                                },
+                                "rateQuantity": {
+                                    "value": 2,
+                                    "unit": "daily"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "resource": {
+                "resourceType": "Practitioner",
+                "identifier": [
+                    {
+                        "system": "http://erx.e-health.bg/ns/uin",
+                        "value": "2300013314"
+                    }
+                ],
+                "name": [
+                    {
+                        "use": "official",
+                        "family": "Поляков",
+                        "given": [
+                            "Иван",
+                            "Акимов"
+                        ],
+                        "prefix": [
+                            "д-р"
+                        ]
+                    }
+                ],
+                "telecom": [
+                    {
+                        "system": "phone",
+                        "value": "088888880",
+                        "use": "mobile"
+                    },
+                    {
+                        "system": "email",
+                        "value": "ipolyakov@e-health.bg",
+                        "use": "work"
+                    }
+                ],
+                "gender": "male"
+            }
+        },
+        {
+            "resource": {
+                "resourceType": "PractitionerRole",
+                "specialty": [
+                    {
+                        "coding": [
+                            {
+                                "system": "http://terminology.e-health.bg/CodeSystem/doctor-speciality-nhif",
+                                "code": "00",
+                                "display": "Общопрактикуващ лекар"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "resource": {
+                "resourceType": "Patient",
+                "identifier": [
+                    {
+                        "system": "http://erx.e-health.bg/ns/nnbgr",
+                        "value": "<omitted>"
+                    }
+                ],
+                "birthDate": "1972-02-09T00:00:00.000Z",
+                "gender": "male",
+                "name": [
+                    {
+                        "family": "ДИМИТРОВ",
+                        "given": [
+                            "ДИМИТЪР",
+                            "НИКОЛАЕВ"
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "resource": {
+                "resourceType": "Encounter",
+                "identifier": [
+                    {
+                        "system": "http://erx.e-health.bg/ns/enc-id",
+                        "value": "007657"
+                    }
+                ],
+                "period": {
+                    "start": "2020-09-01T00:00:00.000Z",
+                    "end": "2020-09-01T00:10:00.000Z"
+                }
+            }
+        }
+    ]
+}'
+```
+
 #### Получаване на информация за изписани рецепти и лекарства от аптеките работещи в регистъра
 ToDo:
 
