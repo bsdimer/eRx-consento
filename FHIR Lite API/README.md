@@ -1725,7 +1725,7 @@ curl --location --request POST 'https://stgerx2.e-health.bg/auth/login' \
 
 ##### Издаване на рецепта по НЗОК, бланка 5.
 ```
-curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?seed=3002' \
+curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?seed=3002&category=N' \
 --header 'Authorization: Bearer <token>' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -1745,16 +1745,6 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
           {
             "system": "http://erx.e-health.bg/ns/booklet-id",
             "value": "1520002"
-          }
-        ],
-        "category": [
-          {
-            "coding": [
-              {
-                "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
-                "code": "A"
-              }
-            ]
           }
         ],
         "medicationCodeableConcept": {
@@ -1914,7 +1904,7 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
 ```
 ##### Издаване на рецепта по НЗОК, бланка 5А.
 ```
-curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?seed=3002' \
+curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?seed=3002&category=A' \
 --header 'Authorization: Bearer <token>' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -1934,16 +1924,6 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
           {
             "system": "http://erx.e-health.bg/ns/booklet-id",
             "value": "1520002"
-          }
-        ],
-        "category": [
-          {
-            "coding": [
-              {
-                "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
-                "code": "A"
-              }
-            ]
           }
         ],
         "medicationCodeableConcept": {
@@ -2013,16 +1993,6 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
             "value": "1520002"
           }
         ],
-        "category": [
-          {
-            "coding": [
-              {
-                "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
-                "code": "A"
-              }
-            ]
-          }
-        ],
         "medicationCodeableConcept": {
           "coding": [
             {
@@ -2088,16 +2058,6 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
           {
             "system": "http://erx.e-health.bg/ns/booklet-id",
             "value": "1520002"
-          }
-        ],
-        "category": [
-          {
-            "coding": [
-              {
-                "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
-                "code": "A"
-              }
-            ]
           }
         ],
         "medicationCodeableConcept": {
