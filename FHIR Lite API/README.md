@@ -724,8 +724,6 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
         "address": [
           {
             "text": "София, жк. Младост 1, бл 1",
-            "use": "official",
-            "type": "both",
             "line": [
               "ж.к. Младост 3, бл. 1"
             ],
@@ -2184,8 +2182,6 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
         "address": [
           {
             "text": "София, жк. Младост 1, бл 1",
-             "use": "official",
-             "type": "both",
              "line": [
                "ж.к. Младост 3, бл. 1"
              ],
@@ -2385,8 +2381,6 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
                 "address": [
                       {
                         "text": "София, жк. Младост 1, бл 1",
-                        "use": "official",
-                        "type": "both",
                         "line": [
                           "ж.к. Младост 3, бл. 1"
                         ],
