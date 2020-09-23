@@ -430,7 +430,7 @@ x-envoy-upstream-service-time: 8
 на системата. Примерна заявка за рецепта представлява:
 
 ```
-curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?seed=3014' \
+curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?seed=3014&category=A' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOjEyNCwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJyb2xlcyI6W3sicm9sZSI6IlJPTEVfTUVESUMiLCJjbGllbnQiOiJtZWRpYyJ9XSwiaXNzIjoiaHR0cHM6Ly9lbG1lZGlrby5jb20iLCJnaXZlbl9uYW1lIjpudWxsLCJjbGllbnRfaWQiOiJtZWRpYyIsInBpY3R1cmUiOm51bGwsInNjb3BlIjoiKi8qLioiLCJwaG9uZV9udW1iZXIiOm51bGwsImV4cCI6MTYwMDM3MjM4MCwiZmFtaWx5X25hbWUiOm51bGwsImVtYWlsIjpudWxsLCJ1c2VybmFtZSI6Im1lZGljNSJ9.2mIruwdqt24M0HytcJKaqUTMOlz1N5DKg2uS9VuQIoBuzEWM2LOI6-O0uqG7kGcaU1CivCxezz7zHe-4luvLKQ' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -450,16 +450,6 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
           {
             "system": "http://erx.e-health.bg/ns/booklet-id",
             "value": "1520002"
-          }
-        ],
-        "category": [
-          {
-            "coding": [
-              {
-                "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
-                "code": "A"
-              }
-            ]
           }
         ],
         "medicationCodeableConcept": {
@@ -529,16 +519,6 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
             "value": "1520002"
           }
         ],
-        "category": [
-          {
-            "coding": [
-              {
-                "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
-                "code": "A"
-              }
-            ]
-          }
-        ],
         "medicationCodeableConcept": {
           "coding": [
             {
@@ -604,16 +584,6 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
           {
             "system": "http://erx.e-health.bg/ns/booklet-id",
             "value": "1520002"
-          }
-        ],
-        "category": [
-          {
-            "coding": [
-              {
-                "system": "http://terminology.e-health.bg/CodeSystem/medication-request-category-bg",
-                "code": "A"
-              }
-            ]
           }
         ],
         "medicationCodeableConcept": {
@@ -750,6 +720,20 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
               "ТРАЙЧЕВ"
             ]
           }
+        ],
+        "address": [
+          {
+            "text": "София, жк. Младост 1, бл 1",
+            "use": "official",
+            "type": "both",
+            "line": [
+              "ж.к. Младост 3, бл. 1"
+            ],
+            "city": "София",
+            "district": "Столична община",
+            "state": "София град",
+            "country": "България"
+          }
         ]
       }
     },
@@ -816,9 +800,11 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
 
 **При издаване на рецепта по НЗОК е важно да се използва кодовата система http://terminology.e-health.bg/CodeSystem/mc-nhif, дори и ако лекарството
 присъства и в кодовата система на SatHealth.**
- 
+
+Адреса на пациента, може да бъде описан само чрез характеристиката "text", т.е. останалите атрибути са незадължителни.
+
 ##### Категории рецепти
-Категорията на рецептат се специфицира в атрибута category.coding[0].code и може да притежава една от следните стойности:
+Категорията на рецептат се специфицира в query трибута e и може да притежава една от следните стойности:
 * W - бяла рецептурна бланка
 * G - зелена рецептурна бланка
 * Y - жълта рецептурна бланка
@@ -2194,6 +2180,20 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
               "ПЕТКОВ"
             ]
           }
+        ],
+        "address": [
+          {
+            "text": "София, жк. Младост 1, бл 1",
+             "use": "official",
+             "type": "both",
+             "line": [
+               "ж.к. Младост 3, бл. 1"
+             ],
+             "city": "София",
+             "district": "Столична община",
+             "state": "София град",
+             "country": "България"
+          }
         ]
       }
     },
@@ -2381,6 +2381,20 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
                             "НИКОЛАЕВ"
                         ]
                     }
+                ],
+                "address": [
+                      {
+                        "text": "София, жк. Младост 1, бл 1",
+                        "use": "official",
+                        "type": "both",
+                        "line": [
+                          "ж.к. Младост 3, бл. 1"
+                        ],
+                        "city": "София",
+                        "district": "Столична община",
+                        "state": "София град",
+                        "country": "България"
+                      }
                 ]
             }
         },
