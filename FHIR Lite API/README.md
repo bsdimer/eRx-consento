@@ -2419,6 +2419,9 @@ curl --location --request POST 'https://erx2.e-health.bg/fhirlite/prescription?s
 * Търсене на предадени лекарства към пациент по ЕГН
 Примерна заявка: https://erx2.e-health.bg/fhir/MedicationDispense?subject.identifier=<ЕГН>&_sort=-_id
 
+* Търсене на неизълнение рецепти за даден пациент
+Примерна заявка: https://erx2.e-health.bg/fhir/MedicationRequest?subject.identifier=<ЕГН>&status=active&_sort=-_id
+
 * Търсене на предадени лекарства към пациент по зададен идентификатор (Баркод) на рецепта
 Примерна заявка: https://erx2.e-health.bg/fhir/MedicationDispense?identifier=<barcode>&_sort=-_id
 
